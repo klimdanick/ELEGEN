@@ -1,0 +1,52 @@
+		.card {
+			display: block;
+			margin-left: 0.5%;
+			margin-right: 0.5%;
+			width: auto;
+			height: auto;
+			padding: 0.5%;
+			border-style: solid;
+			border-color: #FFD369;
+			border-radius: 10px;
+			align: center;
+		}
+		
+		#EleGen {
+			width: 100%;
+			height: 80%;
+			margin: 0%;
+			margin-top: 0%;
+			background: #222831;
+			z-index:-2;
+		}
+		#graph {
+			width: 100%;
+			height: auto;
+			margin: 0%;
+			margin-top: 0%;
+			background: #222831;
+			vertical-align:middle;
+			z-index:-2;
+		}
+		.gen {
+			width: 100%;
+			height: auto;
+			margin: 0%;
+			margin-top: 0%;
+			display: flex;
+			justify-content: center;
+			align-items: baseline;
+			vertical-align:middle;
+		}
+		
+		input[type=number]{
+			width: 3em;
+		} 
+		body {
+			background: #222831;
+			color: #EEEEEE;
+			font-size: 70%;
+		}
+		#menu {
+			z-index:10;
+		}
