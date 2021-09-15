@@ -3,7 +3,7 @@ Live gedcom parser/renderer for HTML
 
 
 # installation
-If your domain is recognized by ELEGEN you only need to upload the elegen.html to your webserver. if you link to this page on your website it should automaticly give you a message that it is running correctly, if not: please contact us.
+If your domain is recognized by ELEGEN you only need to upload the ELEGEN.html to your webserver. if you link to this page on your website it should automaticly give you a message that it is running correctly, if not: please contact us.
 
 If your domain is not recognized by ELEGEN you need to follow these steps:
 1. upload the ELEGEN folder to your webserver.
