@@ -37,10 +37,10 @@
 			align: center;
 		}
 		#M {
-			background: #393E46;
+			background: #FFFFFF;
 		}
 		#F {
-			background: #393E46;
+			background: #FFFFFF;
 		}
 		
 		#file {
@@ -97,7 +97,7 @@
 			height: 80%;
 			margin: 0%;
 			margin-top: 0%;
-			background: #222831;
+			background: #EEEEEE;
 		}
 		.half-circle {
 			width: 200px;
@@ -113,7 +113,7 @@
 			width: 3em;
 		} 
 		body {
-			background: #222831;
-			color: #EEEEEE;
+			background: #EEEEEE;
+			color: #222831;
 		}
 		

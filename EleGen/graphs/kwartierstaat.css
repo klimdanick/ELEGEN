@@ -16,7 +16,7 @@
 			height: 80%;
 			margin: 0%;
 			margin-top: 0%;
-			background: #222831;
+			background: #EEEEEE;
 			z-index:-2;
 		}
 		#graph {
@@ -24,7 +24,7 @@
 			height: auto;
 			margin: 0%;
 			margin-top: 0%;
-			background: #222831;
+			background: #EEEEEE;
 			vertical-align:middle;
 			z-index:-2;
 		}
@@ -43,8 +43,8 @@
 			width: 3em;
 		} 
 		body {
-			background: #222831;
-			color: #EEEEEE;
+			background: #EEEEEE;
+			color: #222831;
 			font-size: 70%;
 		}
 		#menu {

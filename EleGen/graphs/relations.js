@@ -10,7 +10,7 @@ function drawRelations(i) {
 			//console.log(family);
 			let family2 = getFamilyFull(family.gen1.HUSB.REC);	
 			//console.log(family2);
-			if (window.location.host != "stamboom.klimda.nl/") {console.log(window.location.host); tekst = HttpRequest(mainLink +"stamboom.klimda.nl/" + window.location.host + "/tekst/" + family.gen2.SEL.FAM.FAMS + ".txt");}
+			if (window.location.host != "stamboom.klimda.nl") {console.log(window.location.host); tekst = HttpRequest(mainLink +"stamboom.klimda.nl/" + window.location.host + "/tekst/" + family.gen2.SEL.FAM.FAMS + ".txt");}
 			else {console.log("stamboom"); tekst = HttpRequest("http://stamboom.klimda.nl/stamboom.klimda.nl/tekst/" + family.gen2.SEL.FAM.FAMS + ".txt");}
 			if (tekst.includes("The resource you are looking for has been removed, had its name changed, or is temporarily unavailable.")) tekst = "";
 			//console.log(tekst);
@@ -125,13 +125,13 @@ function drawRelations(i) {
 			let top = gen1.children[0].offsetTop + gen1.children[0].offsetHeight/2;
 			let height = 2;
 			
-			lines.innerHTML += '<div style="width: ' + width + 'px; height: ' + height + 'px; background-color: white; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>'
+			line(width,height,top,left,lines);
 			
 			width = 2;
 			left = ((gen1.children[1].offsetLeft) + (gen1.children[0].offsetLeft + gen1.children[0].offsetWidth))/2;
 			height = ((gen1.children[0].offsetTop + gen2.children[0].offsetTop)/2) - top;
 			
-			lines.innerHTML += '<div style="width: ' + width + 'px; height: ' + height + 'px; background-color: white; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>'
+			line(width,height,top,left,lines);
 			
 			if (gen2.children[3].firstChild != null) {
 				left = (gen2.children[0].offsetLeft + gen2.children[0].offsetWidth/2);
@@ -146,21 +146,21 @@ function drawRelations(i) {
 				height = 2;
 			}
 			
-			lines.innerHTML += '<div style="width: ' + width + 'px; height: ' + height + 'px; background-color: white; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>'
+			line(width,height,top,left,lines);
 			
 			if (gen2.children[3].firstChild != null) {
 				left += width;
 				width = 2;
 				height = gen2.children[3].offsetTop - top;
 			
-				lines.innerHTML += '<div style="width: ' + width + 'px; height: ' + height + 'px; background-color: white; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>'
+				line(width,height,top,left,lines);
 			}
 			
 			left = (gen2.children[0].offsetLeft + gen2.children[0].offsetWidth/2);
 			width = 2;
 			height = gen2.children[0].offsetTop - top;
 			
-			lines.innerHTML += '<div style="width: ' + width + 'px; height: ' + height + 'px; background-color: white; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>'
+			line(width,height,top,left,lines);
 			
 			if (gen2.children[1].outerHTML == "<p></p>") return;
 			
@@ -169,7 +169,7 @@ function drawRelations(i) {
 			width = gen2.children[1].offsetLeft - left;
 			height = 2;
 			
-			lines.innerHTML += '<div style="width: ' + width + 'px; height: ' + height + 'px; background-color: white; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>'
+			line(width,height,top,left,lines);
 			
 			
 			if (gen3.children.length <= 2) return;
@@ -178,20 +178,20 @@ function drawRelations(i) {
 			width = 2;
 			height = gen3.children[0].offsetTop - top - 10;
 			
-			lines.innerHTML += '<div style="width: ' + width + 'px; height: ' + height + 'px; background-color: white; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>'
+			line(width,height,top,left,lines);
 			
 			top += height;
 			height = 2;
 			width = gen3.children[0].offsetLeft - left;
 			
-			lines.innerHTML += '<div style="width: ' + width + 'px; height: ' + height + 'px; background-color: white; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>'
+			line(width,height,top,left,lines);
 			
 			
 			height = gen3.children[0].offsetHeight + 20;
 			width = gen3.children[gen3.children.length-1].offsetLeft + gen3.children[gen3.children.length-1].offsetWidth - gen3.children[0].offsetLeft ;
 			left = gen3.children[0].offsetLeft - 10;
 			
-			gen3.innerHTML = '<div style=" z-index: -1; width: ' + width + 'px; height: ' + height + 'px; border-style: solid; border-color: #FFFFFF; border-radius: 10px; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>' + gen3.innerHTML;
+			gen3.innerHTML = '<div style=" z-index: -1; width: ' + width + 'px; height: ' + height + 'px; border-style: solid; border-color: black; border-radius: 10px; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>' + gen3.innerHTML;
 			for (let i = 0; i < family.gen3.CHIL.length; i++) {
 				if (getFamily(family.gen3.CHIL[i].REC).gen3.CHIL.length != 0) {
 					height = 50;
@@ -205,4 +205,8 @@ function drawRelations(i) {
 			}
 		}
 		
+		
+		function line(width, height, top, left, lines) {
+			lines.innerHTML += '<div style="width: ' + width + 'px; height: ' + height + 'px; background-color: black; position: absolute; top: ' + top + 'px; left: ' + left + 'px;"></div>';
+		}
 		// <div style="width: 500px; height: 2px; background-color: white; position: absolute; top: 100px; left: 100px;"></div>

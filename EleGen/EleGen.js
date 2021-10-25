@@ -295,7 +295,7 @@
 		let mainLink = "https://elmental-cors.herokuapp.com/";
 		
 		function HttpRequest(url) {
-			let finalURL = mainLink + url;
+			let finalURL = url;
 
 			httpRequest.open("GET", url, false);
 
@@ -309,8 +309,8 @@
 		fileLines = HttpRequest(webURL + "/ged.txt").replace("â", "e").split("\r");
 		if (HttpRequest(webURL + "/ged.txt").includes("The resource you are looking for has been removed, had its name changed, or is temporarily unavailable.")) {
 			let gedLink;
-			if (window.location.host != "stamboom.klimda.nl/") {console.log(window.location.host); gedLink = mainLink + "stamboom.klimda.nl/" + window.location.host + "/ged.txt";}
-			else gedLink = "stamboom.klimda.nl/stamboom.klimda.nl/ged.txt";
+			if (window.location.host != "stamboom.klimda.nl") {console.log(window.location.host); gedLink = mainLink + "stamboom.klimda.nl/" + window.location.host + "/ged.txt";}
+			else gedLink = "http://stamboom.klimda.nl/stamboom.klimda.nl/ged.txt";
 			fileLines = HttpRequest(gedLink).replace("â", "e").split("\r");
 			console.log(fileLines);
 		}
