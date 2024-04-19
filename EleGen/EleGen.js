@@ -104,11 +104,14 @@ function findFamByRec(id, fams) {
 }
 
 function buildFam(fam, indis) {
-	fam.husb=findByRec(fam.husb, indis);
-	fam.wife=findByRec(fam.wife, indis);
-	for (let i = 0; i < fam.chil.length; i++) {
+	if (!fam) return {};
+	if (fam.husb) fam.husb=findByRec(fam.husb, indis);
+	else fam.husb == null;
+	if (fam.wife) fam.wife=findByRec(fam.wife, indis);
+	else fam.wife == null;
+	if (fam.chil) for (let i = 0; i < fam.chil.length; i++) {
 		fam.chil[i] = findByRec(fam.chil[i], indis);
-	}
+	} else fam.chil == [];
 	return fam;
 }
 
