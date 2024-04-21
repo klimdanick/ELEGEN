@@ -21,6 +21,8 @@ async function getIndis() {
 			if (!lines[i].startsWith("1")) continue;
 			if (lines[i].includes("NAME"))
 				indi.name = lines[i].substring(7, lines[i].length);
+			if (lines[i].includes("NICK"))
+				indi.nick = lines[i].substring(7, lines[i].length);
 			if (lines[i].includes("SEX"))
 				indi.sex = lines[i].substring(6, lines[i].length);
 			if (lines[i].includes("RFN"))
@@ -119,18 +121,21 @@ function buildRel(indi, indis, fams) {
 	let p = findByRec(indi, indis);
 	let famC = buildFam(findFamByRec(p.famc, fams), indis);
 	let famS = buildFam(findFamByRec(p.fams, fams), indis);
-	console.log(famC);
+	//console.log(famC);
 	let Rel = {
-		"sel": p,
-		 "par": {
-			"dad": famC.husb, 
-			"mam": famC.wife
+		"gen0": {
+			"husb": famC.husb, 
+			"wife": famC.wife
 		},
-		"chil": []
+		"gen1": {
+			"husb": famS.husb,
+			"wife": famS.wife,
+		},
+		"gen2": []
 	};
 	if (famS.chil) {
 		for (let i = 0; i < famS.chil.length; i++)
-			Rel.chil.push(famS.chil[i]);
+			Rel.gen2.push(famS.chil[i]);
 	}
 
 	return Rel;

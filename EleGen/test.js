@@ -84,13 +84,27 @@ async function _TEST_build_fam() {
     let indis = await getIndis();
     let fams = await getFams();
     let f = buildFam(fams[0], indis);
-    console.log(f);
+    //console.log(f);
 }
 
-async function _TEST_build_fam() {
+async function _TEST_build_rel() {
     let indis = await getIndis();
     let fams = await getFams();
-    let p = "@I1284@";
+    let p = "@I1335@";
     let rel = await buildRel(p, indis, fams);
-    console.log(f);
+
+    let result = {"gen0": [], "gen1": [], "gen2": []};
+
+    result.gen0["husb"] = rel.gen0.husb.name == "Pieter Willem /IMHOLZ/";
+    result.gen0["wife"] = rel.gen0.wife.name == "Anna Maria Eduarda /KONERMANN/";
+
+    result.gen1["husb"] = rel.gen1.husb.name == "Koen Pieter Willem /Imholz/";
+    result.gen1["wife"] = rel.gen1.wife.name == "Louise Johanna /Komijn/";
+
+    result.gen2["chil1"] = rel.gen2[0].name == "Mylene Angelica /Imholz/";
+    result.gen2["chil2"] = rel.gen2[1].name == "Danick Xavier /Imholz/";
+
+    console.log(_TEST_build_rel.name);
+    console.table(result);
+    console.log("\n");
 }
