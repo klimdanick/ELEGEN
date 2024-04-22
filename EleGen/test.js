@@ -8,21 +8,21 @@
     _TEST_build_rel();
 }
 
-
 async function _TEST_Indis_length() {
     let pass = true;
     let time = Date.now();
-    let indis = await getIndis();
+    let indis = await getIndist(await fetchGed());
     time = Date.now() - time;
     pass = indis.length == 5559;
+
     console.log(_TEST_Indis_length.name);
     if (pass) console.table({pass, time});
-    else console.table({pass, time, "length": indis.length});
+    else console.table({pass, time, "length": indis.length, "lengthOpt": indisOpt.length});
     console.log("\n");
 }
 
 async function _TEST_Indi_By_Id() {
-    let indis = await getIndis();
+    let indis = await getIndis(await fetchGed());
     let pass = true;
     let time = Date.now();
     let p = findByRec("@I4729@", indis);
@@ -35,7 +35,7 @@ async function _TEST_Indi_By_Id() {
 }
 
 async function _TEST_Indi_Parse() {
-    let indis = await getIndis();
+    let indis = await getIndis(await fetchGed());
     let p = findByRec("@I5@", indis);
     let result = {"name": [], "nick": [], "sex": [], "rfn": [], "birth": [], "chr": [], "deat": [], "famc": [], "fams": []};
 
@@ -56,7 +56,7 @@ async function _TEST_Indi_Parse() {
 async function _TEST_Fams_length() {
     let pass = true;
     let time = Date.now();
-    let fams = await getFams();
+    let fams = await getFams(await fetchGed());
     time = Date.now() - time;
     pass = fams.length == 2119;
     console.log(_TEST_Fams_length.name);
@@ -66,7 +66,7 @@ async function _TEST_Fams_length() {
 }
 
 async function _TEST_Fams_Parse() {
-    let fam = (await getFams())[0];
+    let fam = (await getFams(await fetchGed()))[0];
     let result = {"husb": [], "wife": [], "rfn": [], "mar": [], "chil": []};
 
     result.husb["value"] = fam.husb; result.husb["passed"] = fam.husb == "@I5542@";
@@ -81,15 +81,17 @@ async function _TEST_Fams_Parse() {
 }
 
 async function _TEST_build_fam() {
-    let indis = await getIndis();
-    let fams = await getFams();
+    let lines = await fetchGed();
+    let indis = await getIndis(lines);
+    let fams = await getFams(lines);
     let f = buildFam(fams[0], indis);
     //console.log(f);
 }
 
 async function _TEST_build_rel() {
-    let indis = await getIndis();
-    let fams = await getFams();
+    let lines = await fetchGed();
+    let indis = await getIndis(lines);
+    let fams = await getFams(lines);
     let p = "@I1335@";
     let rel = await buildRel(p, indis, fams);
 

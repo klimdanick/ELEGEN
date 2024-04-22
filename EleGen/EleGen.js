@@ -8,8 +8,7 @@ async function fetchGed() {
 	return lines;
 }
 
-async function getIndis() {
-	let lines = await fetchGed();
+async function getIndis(lines) {
 	let INDIS = [];
 	for (let i = 0; i < lines.length; i++) {
 		if (!lines[i].startsWith("0")) continue;
@@ -19,28 +18,20 @@ async function getIndis() {
 		for (i++; i < lines.length; i++) {
 			if (lines[i].startsWith("0")) {i--; break;}
 			if (!lines[i].startsWith("1")) continue;
-			if (lines[i].includes("NAME"))
-				indi.name = lines[i].substring(7, lines[i].length);
-			if (lines[i].includes("NICK"))
-				indi.nick = lines[i].substring(7, lines[i].length);
-			if (lines[i].includes("SEX"))
-				indi.sex = lines[i].substring(6, lines[i].length);
-			if (lines[i].includes("RFN"))
-				indi.ref = lines[i].substring(6, lines[i].length);
-			if (lines[i].includes("FAMC"))
-				indi.famc = lines[i].substring(7, lines[i].length);
-			if (lines[i].includes("FAMS"))
-				indi.fams = lines[i].substring(7, lines[i].length);
+			{
+				let list = ["NAME", "NICK", "SEX", "RFN", "FAMC", "FAMS"];
+				let type = list.find(e => lines[i].includes(e));
+				if (type) indi[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
+			}
 			if (lines[i].includes("BIRT")) {
 				let birth = {};
 				for (i++; i < lines.length; i++) {
 					if (!lines[i].startsWith("2")) {i--; break;}
-					if (lines[i].includes("DATE"))
-						birth.date = lines[i].substring(7, lines[i].length);
-					if (lines[i].includes("PLAC"))
-						birth.place = lines[i].substring(7, lines[i].length);
-					if (lines[i].includes("SOUR"))
-						birth.src = lines[i].substring(7, lines[i].length);
+					{
+						let list = ["DATE", "PLAC", "SOUR"];
+						let type = list.find(e => lines[i].includes(e));
+						if (type) birth[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
+					}
 				}
 				indi.birth = birth;
 			}
@@ -48,12 +39,11 @@ async function getIndis() {
 				let baptized = {};
 				for (i++; i < lines.length; i++) {
 					if (!lines[i].startsWith("2")) {i--; break;}
-					if (lines[i].includes("DATE"))
-						baptized.date = lines[i].substring(7, lines[i].length);
-					if (lines[i].includes("PLAC"))
-						baptized.place = lines[i].substring(7, lines[i].length);
-					if (lines[i].includes("SOUR"))
-						baptized.src = lines[i].substring(7, lines[i].length);
+					{
+						let list = ["DATE", "PLAC", "SOUR"];
+						let type = list.find(e => lines[i].includes(e));
+						if (type) baptized[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
+					}
 				}
 				indi.baptized = baptized;
 			}
@@ -61,12 +51,11 @@ async function getIndis() {
 				let death = {};
 				for (i++; i < lines.length; i++) {
 					if (!lines[i].startsWith("2")) {i--; break;}
-					if (lines[i].includes("DATE"))
-						death.date = lines[i].substring(7, lines[i].length);
-					if (lines[i].includes("PLAC"))
-						death.place = lines[i].substring(7, lines[i].length);
-					if (lines[i].includes("SOUR"))
-						death.src = lines[i].substring(7, lines[i].length);
+					{
+						let list = ["DATE", "PLAC", "SOUR"];
+						let type = list.find(e => lines[i].includes(e));
+						if (type) death[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
+					}
 				}
 				indi.death = death;
 			}
@@ -142,8 +131,7 @@ function buildRel(indi, indis, fams) {
 }
 
 
-async function getFams() {
-	let lines = await fetchGed();
+async function getFams(lines) {
 	let fams = [];
 	for (let i = 0; i < lines.length; i++) {
 		if (!lines[i].startsWith("0")) continue;
