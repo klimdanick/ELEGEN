@@ -18,72 +18,6 @@ async function getIndis(lines) {
 		for (i++; i < lines.length; i++) {
 			if (lines[i].startsWith("0")) {i--; break;}
 			if (!lines[i].startsWith("1")) continue;
-			{
-				let list = ["NAME", "NICK", "SEX", "RFN", "FAMC", "FAMS"];
-				let type = list.find(e => lines[i].includes(e));
-				if (type) indi[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
-			}
-			if (lines[i].includes("BIRT")) {
-				let birth = {};
-				for (i++; i < lines.length; i++) {
-					if (!lines[i].startsWith("2")) {i--; break;}
-					{
-						let list = ["DATE", "PLAC", "SOUR"];
-						let type = list.find(e => lines[i].includes(e));
-						if (type) birth[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
-					}
-				}
-				indi.birth = birth;
-			}
-			if (lines[i].includes("CHR")) {
-				let baptized = {};
-				for (i++; i < lines.length; i++) {
-					if (!lines[i].startsWith("2")) {i--; break;}
-					{
-						let list = ["DATE", "PLAC", "SOUR"];
-						let type = list.find(e => lines[i].includes(e));
-						if (type) baptized[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
-					}
-				}
-				indi.baptized = baptized;
-			}
-			if (lines[i].includes("DEAT")) {
-				let death = {};
-				for (i++; i < lines.length; i++) {
-					if (!lines[i].startsWith("2")) {i--; break;}
-					{
-						let list = ["DATE", "PLAC", "SOUR"];
-						let type = list.find(e => lines[i].includes(e));
-						if (type) death[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
-					}
-				}
-				indi.death = death;
-			}
-			
-			if (lines[i].includes("NOTE")) {
-				let note = lines[i].substring(7, lines[i].length);
-				for (i++; i < lines.length; i++) {
-					if (!lines[i].startsWith("2")) {i--;break;}
-					note += "\n" + lines[i].substring(7, lines[i].length);
-				}
-				indi.note = note;
-			}
-			
-		}
-	}
-	return INDIS;
-}
-
-async function getIndisOpt(lines) {
-	let INDIS = [];
-	for (let i = 0; i < lines.length; i++) {
-		if (!lines[i].startsWith("0")) continue;
-		if (!lines[i].includes("INDI")) continue;
-		let indi = new INDI(lines[i].split(" ")[1]);
-		INDIS.push(indi);
-		for (i++; i < lines.length; i++) {
-			if (lines[i].startsWith("0")) {i--; break;}
-			if (!lines[i].startsWith("1")) continue;
 			if (lines[i].includes("NAME"))
 				indi.name = lines[i].substring(7, lines[i].length);
 			if (lines[i].includes("NICK"))
@@ -207,8 +141,7 @@ function buildRel(indi, indis, fams) {
 }
 
 
-async function getFams() {
-	let lines = await fetchGed();
+async function getFams(lines) {
 	let fams = [];
 	for (let i = 0; i < lines.length; i++) {
 		if (!lines[i].startsWith("0")) continue;
