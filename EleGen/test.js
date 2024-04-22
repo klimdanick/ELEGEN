@@ -1,4 +1,4 @@
-{
+/*{
     _TEST_Indis_length();
     _TEST_Indi_By_Id();
     _TEST_Indi_Parse();
@@ -6,18 +6,38 @@
     _TEST_Fams_Parse();
     _TEST_build_fam();
     _TEST_build_rel();
-}
+}*/
 
+async function a() {
+    let lines = await fetchGed();
+    let a = 100;
+    let tot = 0, totOpt = 0;
+    for (let i = 0; i < a; i++) {
+        let t = Date.now();
+        await getIndis(lines);
+        tot += Date.now() - t;
+        let t2 = Date.now();
+        await getIndisOpt(lines);
+        totOpt += Date.now() - t2;
+    }
+    tot/=a;
+    totOpt/=a;
+
+    console.table({tot, totOpt});
+    console.log("\n");
+}
+a();
 
 async function _TEST_Indis_length() {
     let pass = true;
     let time = Date.now();
-    let indis = await getIndis();
+    let indis = await getIndisOpt();
     time = Date.now() - time;
     pass = indis.length == 5559;
+
     console.log(_TEST_Indis_length.name);
-    if (pass) console.table({pass, time});
-    else console.table({pass, time, "length": indis.length});
+    if (pass) console.table({pass, passOpt, time, timeOpt});
+    else console.table({pass, passOpt, time, timeOpt, "length": indis.length, "lengthOpt": indisOpt.length});
     console.log("\n");
 }
 
