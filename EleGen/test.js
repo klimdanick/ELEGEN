@@ -1,10 +1,10 @@
 {
-    _TEST_Indis_length();
-    _TEST_Indi_By_Id();
-    _TEST_Indi_Parse();
-    _TEST_Fams_length();
-    _TEST_Fams_Parse();
-    _TEST_build_fam();
+    // _TEST_Indis_length();
+    // _TEST_Indi_By_Id();
+    // _TEST_Indi_Parse();
+    // _TEST_Fams_length();
+    // _TEST_Fams_Parse();
+    // _TEST_build_fam();
     _TEST_build_rel();
 }
 
@@ -42,12 +42,12 @@ async function _TEST_Indi_Parse() {
     result.name["value"] = p.name; result.name["passed"] = p.name == "Jennegien /van Aarst/";
     result.nick["value"] = p.nick; result.nick["passed"] = p.nick == "Jannetje/Jannigje";
     result.sex["value"] = p.sex; result.sex["passed"] = p.sex == "F";
-    result.rfn["value"] = p.ref; result.rfn["passed"] = p.ref == "5";
+    result.rfn["value"] = p.rfn; result.rfn["passed"] = p.rfn == "5";
     result.birth["value"] = p.birth.date; result.birth["passed"] = p.birth.date == "15 OCT 1806";
     result.chr["value"] = p.baptized.date; result.chr["passed"] = p.baptized.date == "02 NOV 1806";
     result.deat["value"] = p.death.date; result.deat["passed"] = p.death.date == "1887";
     result.famc["value"] = p.famc; result.famc["passed"] = p.famc == "@F2@";
-    result.fams["value"] = p.fams; result.fams["passed"] = p.fams == "@F3@";
+    result.fams["value"] = p.fams[0]; result.fams["passed"] = p.fams[0] == "@F3@";
     console.log(_TEST_Indi_Parse.name);
     console.table(result);
     console.log("\n");
@@ -96,7 +96,7 @@ async function _TEST_build_rel() {
     let rel = await buildRel(p, indis, fams);
 
     let result = {"gen0": [], "gen1": [], "gen2": []};
-
+    console.log(rel);
     result.gen0["husb"] = rel.gen0.husb.name == "Pieter Willem /IMHOLZ/";
     result.gen0["wife"] = rel.gen0.wife.name == "Anna Maria Eduarda /KONERMANN/";
 

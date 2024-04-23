@@ -7,6 +7,7 @@ async function fetchGed() {
 	});
 	return lines;
 }
+///I1561   /// good example indi
 
 async function getIndis(lines) {
 	let INDIS = [];
@@ -19,9 +20,12 @@ async function getIndis(lines) {
 			if (lines[i].startsWith("0")) {i--; break;}
 			if (!lines[i].startsWith("1")) continue;
 			{
-				let list = ["NAME", "NICK", "SEX", "RFN", "FAMC", "FAMS"];
+				let list = ["NAME", "NICK", "SEX", "RFN", "FAMC"];
 				let type = list.find(e => lines[i].includes(e));
-				if (type) indi[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
+				if (type) indi[type.toLowerCase()] = lines[i].substring(3+type.length, lines[i].length);
+			}
+			if (lines[i].includes("FAMS")) {
+				indi["fams"].push(lines[i].substring(7, lines[i].length));
 			}
 			if (lines[i].includes("BIRT")) {
 				let birth = {};
@@ -30,7 +34,7 @@ async function getIndis(lines) {
 					{
 						let list = ["DATE", "PLAC", "SOUR"];
 						let type = list.find(e => lines[i].includes(e));
-						if (type) birth[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
+						if (type) birth[type.toLowerCase()] = lines[i].substring(3+type.length, lines[i].length);
 					}
 				}
 				indi.birth = birth;
@@ -42,7 +46,7 @@ async function getIndis(lines) {
 					{
 						let list = ["DATE", "PLAC", "SOUR"];
 						let type = list.find(e => lines[i].includes(e));
-						if (type) baptized[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
+						if (type) baptized[type.toLowerCase()] = lines[i].substring(3+type.length, lines[i].length);
 					}
 				}
 				indi.baptized = baptized;
@@ -54,7 +58,7 @@ async function getIndis(lines) {
 					{
 						let list = ["DATE", "PLAC", "SOUR"];
 						let type = list.find(e => lines[i].includes(e));
-						if (type) death[type.toLowerCase] = lines[i].substring(3+type.length, lines[i].length);
+						if (type) death[type.toLowerCase()] = lines[i].substring(3+type.length, lines[i].length);
 					}
 				}
 				indi.death = death;
@@ -87,11 +91,12 @@ function findByRec(id, indis) {
 	return null; 
 }
 
-function findFamByRec(id, fams) {
+function findFamByRec(ids, fams) {
+	let fams_ = [];
 	for (let i = 0; i < fams.length; i++) 
-		if (fams[i].id == id)
-			return fams[i];
-	return null; 
+		if (ids.includes(fams[i].id))
+			fams_.push(fams[i]);
+	return fams_; 
 }
 
 function buildFam(fam, indis) {
@@ -108,25 +113,35 @@ function buildFam(fam, indis) {
 
 function buildRel(indi, indis, fams) {
 	let p = findByRec(indi, indis);
-	let famC = buildFam(findFamByRec(p.famc, fams), indis);
-	let famS = buildFam(findFamByRec(p.fams, fams), indis);
-	//console.log(famC);
+	
+	let famC = findFamByRec([p.famc], fams)[0];
+	buildFam(famC, indis);
+
+	let famS = findFamByRec(p.fams, fams);
+	for (let i = 0; i < famS.length; i++) buildFam(famS[i], indis);
+	
+	let pars = [];
+	for (let i = 0; i < famS.length; i++) {
+	 	pars.push(famS[i].wife.rfn != p.rfn ? famS[i].wife : famS[i].husb);
+	}
+
 	let Rel = {
 		"gen0": {
-			"husb": famC.husb, 
+			"husb": famC.husb,
 			"wife": famC.wife
 		},
 		"gen1": {
-			"husb": famS.husb,
-			"wife": famS.wife,
+			"sel": p,
+			"pars": pars
 		},
 		"gen2": []
 	};
-	if (famS.chil) {
-		for (let i = 0; i < famS.chil.length; i++)
-			Rel.gen2.push(famS.chil[i]);
+	for (let j = 0; j < famS.length; j++) {
+		if (famS[j].chil) {
+			for (let i = 0; i < famS[j].chil.length; i++)
+				Rel.gen2.push(famS[j].chil[i]);
+		}
 	}
-
 	return Rel;
 }
 
@@ -173,6 +188,7 @@ async function getFams(lines) {
 class INDI {
 	constructor(id) {
 		this.id = id;
+		this.fams = [];
 	}
 }
 
