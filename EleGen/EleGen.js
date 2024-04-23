@@ -1,4 +1,113 @@
-let lines = [];
+class Person {
+	constructor(indi, x, y, options = {"hideDates": false}) {
+		if (!indi) return;
+		this.indi = indi;
+		this.el = document.createElement("div");
+		this.el.classList.add("person");
+		this.el.classList.add(indi.sex);
+		this.el.onclick = () => {selectPerson("@I"+indi.rfn+"@");};
+		document.documentElement.getElementsByClassName("persons")[0].appendChild(this.el);
+
+		if (!indi.death && !indi.birth) options.hideDates = true;
+
+		this.el.style.top = y+"%";
+		this.el.style.left = x+"%";
+
+		if (this.indi.name) {
+			this.name = document.createElement("span");
+			this.name.classList.add("name");
+			this.name.innerText = indi.name.replaceAll("/", "");
+			this.name.style.fontSize = "100%";
+			this.el.appendChild(this.name);
+			
+		} 
+		if (options && options.hideDates) {
+			this.el.style.height = "4em";
+			return;
+		}
+		if (this.indi.birth) {
+			let text = document.createElement("span");
+			text.innerText = "birth";
+			text.style.fontWeight = "bold";
+			this.el.appendChild(document.createElement("hr"));
+			this.el.appendChild(text);
+			this.birth = document.createElement("span");
+			this.birth.classList.add("birth");
+			this.birth.innerText = indi.birth.date + "\n" + indi.birth.plac;
+			this.el.appendChild(this.birth);
+		} if (this.indi.death) {
+			let text = document.createElement("span");
+			text.innerHTML = "death";
+			text.style.fontWeight = "bold";
+			this.el.appendChild(document.createElement("hr"));
+			this.el.appendChild(text);
+			this.death = document.createElement("span");
+			this.death.classList.add("death");
+			this.death.innerText = indi.death.date + "\n" + indi.death.plac;
+			this.el.appendChild(this.death);
+		}
+	}
+}
+
+class Line{
+	constructor(horizontal, start, end, limit, label = "") {
+		this.el = document.createElement("div");
+		this.el.style.border = "2px solid white";
+		this.el.style.position = "absolute";
+		if (horizontal) {
+			this.el.style.height = "0";
+			this.el.style.width = (end - start)+"%";
+			this.el.style.top = limit+"%";
+			this.el.style.left = start+"%";
+		
+			this.label = document.createElement("span");
+			this.label.innerText = label;
+			this.label.style.position = "absolute";
+			this.label.style.top = (limit - 2)+"%";
+			this.label.style.left = ((start+end)/2)+"%";
+			document.documentElement.getElementsByClassName("lines")[0].appendChild(this.label);
+
+		} else {
+			this.el.style.width = "0";
+			this.el.style.height = (end - start)+"%";
+			this.el.style.left = limit+"%";
+			this.el.style.top = start+"%";
+		}
+		document.documentElement.getElementsByClassName("lines")[0].appendChild(this.el);
+	}
+}
+
+async function selectPerson(id) {
+	document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
+	document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
+	let lines = await fetchGed();
+	let indis = await getIndis(lines);
+	let fams = await getFams(lines);
+	let rels = await buildRel(id, indis, fams);
+	new Person(rels.gen0.husb, 33, 10);
+	if (rels.gen0.husb) new Line(true, 33, 50, 10);
+	new Person(rels.gen0.wife, 66, 10);
+	if (rels.gen0.wife) new Line(true, 50, 66, 10);
+	if (rels.gen0.wife || rels.gen0.husb)
+		new Line(false, 10, 40, 50);
+	new Person(rels.gen1.sel, 50, 40);
+	if (rels.gen1.pars.length > 0) new Line(true, 40, 50, 40);
+	for (let i = 0; i < rels.gen1.pars.length; i++) {
+		new Person(rels.gen1.pars[i], 20, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), {"hideDates": rels.gen1.pars.length >= 2});
+		let label = "";
+		if (rels.gen1.pars[i].mar) label = rels.gen1.pars[i].mar.date;
+		new Line(true, 20, 40, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), label);
+		new Line(false, Math.min(40+10*(i-Math.floor(rels.gen1.pars.length/2)), 40), Math.max(40+10*(i-Math.floor(rels.gen1.pars.length/2)), 40), 40);
+	}
+	let offset = -Math.floor(rels.gen2.length/2);
+	if (rels.gen2.length % 2 == 0) offset += 0.5;
+	for (let i = 0; i < rels.gen2.length; i++) new Person(rels.gen2[i], 50+15*(i+offset), 80);
+
+}
+
+window.onload = () => {
+	selectPerson("@I1296@");
+}
 
 async function fetchGed() {
 	//if (lines != []) return lines;
@@ -7,7 +116,7 @@ async function fetchGed() {
 	});
 	return lines;
 }
-///I1561   /// good example indi
+///I1561   /// good example indi  I1335
 
 async function getIndis(lines) {
 	let INDIS = [];
@@ -123,12 +232,18 @@ function buildRel(indi, indis, fams) {
 	let pars = [];
 	for (let i = 0; i < famS.length; i++) {
 	 	pars.push(famS[i].wife.rfn != p.rfn ? famS[i].wife : famS[i].husb);
+		pars[i].mar = famS[i].mar;
 	}
-
+	let dad = null;
+	let mom = null;
+	if (famC) {
+		dad = famC.husb;
+		mom = famC.wife;
+	}
 	let Rel = {
 		"gen0": {
-			"husb": famC.husb,
-			"wife": famC.wife
+			"husb": dad,
+			"wife": mom
 		},
 		"gen1": {
 			"sel": p,

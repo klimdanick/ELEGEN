@@ -1,17 +1,17 @@
 {
-    // _TEST_Indis_length();
-    // _TEST_Indi_By_Id();
-    // _TEST_Indi_Parse();
-    // _TEST_Fams_length();
-    // _TEST_Fams_Parse();
-    // _TEST_build_fam();
+    _TEST_Indis_length();
+    _TEST_Indi_By_Id();
+    _TEST_Indi_Parse();
+    _TEST_Fams_length();
+    _TEST_Fams_Parse();
+    _TEST_build_fam();
     _TEST_build_rel();
 }
 
 async function _TEST_Indis_length() {
     let pass = true;
     let time = Date.now();
-    let indis = await getIndist(await fetchGed());
+    let indis = await getIndis(await fetchGed());
     time = Date.now() - time;
     pass = indis.length == 5559;
 
