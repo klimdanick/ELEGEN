@@ -40,4 +40,6 @@ span {
 .person hr {
 	width: 100%;
 	margin: 4px;
+	border-color: white;
+	border-style: solid;
 }

@@ -95,7 +95,7 @@ async function selectPerson(id) {
 	for (let i = 0; i < rels.gen1.pars.length; i++) {
 		new Person(rels.gen1.pars[i], 20, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), {"hideDates": rels.gen1.pars.length >= 2});
 		let label = "";
-		if (rels.gen1.pars[i].mar) label = rels.gen1.pars[i].mar.date;
+		if (rels.gen1.pars[i].mar) label = rels.gen1.pars[i].mar.date + "\n" + rels.gen1.pars[i].mar.plac;
 		new Line(true, 20, 40, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), label);
 		new Line(false, Math.min(40+10*(i-Math.floor(rels.gen1.pars.length/2)), 40), Math.max(40+10*(i-Math.floor(rels.gen1.pars.length/2)), 40), 40);
 	}
