@@ -46,13 +46,18 @@ class Person {
 			this.death.innerText = indi.death.date + "\n" + indi.death.plac;
 			this.el.appendChild(this.death);
 		}
+
+
+		
+		//  ◯
 	}
 }
 
 class Line{
-	constructor(horizontal, start, end, limit, label = "") {
+	constructor(horizontal, start, end, limit, label = "", dotted = false) {
 		this.el = document.createElement("div");
-		this.el.style.border = "2px solid white";
+		if (dotted) this.el.style.border = "2px dashed white";
+		else this.el.style.border = "2px solid white";
 		this.el.style.position = "absolute";
 		if (horizontal) {
 			this.el.style.height = "0";
@@ -84,12 +89,22 @@ async function selectPerson(id) {
 	let indis = await getIndis(lines);
 	let fams = await getFams(lines);
 	let rels = await buildRel(id, indis, fams);
-	new Person(rels.gen0.husb, 33, 10);
-	if (rels.gen0.husb) new Line(true, 33, 50, 10);
-	new Person(rels.gen0.wife, 66, 10);
-	if (rels.gen0.wife) new Line(true, 50, 66, 10);
+	console.log(rels);
+
+	if (rels.gen0.husb) {
+	new Person(rels.gen0.husb, 33, 15);
+	if (rels.gen0.husb) new Line(true, 33, 50, 15);
+	if (rels.gen0.husb.famc) new Line(false, 0, 15, 33, "", true);
+	}
+
+	if (rels.gen0.wife) {
+	new Person(rels.gen0.wife, 66, 15);
+	if (rels.gen0.wife) new Line(true, 50, 66, 15);
+	if (rels.gen0.wife.famc) new Line(false, 0, 15, 66, "", true);
+	}
+
 	if (rels.gen0.wife || rels.gen0.husb)
-		new Line(false, 10, 40, 50);
+		new Line(false, 15, 40, 50);
 	new Person(rels.gen1.sel, 50, 40);
 	if (rels.gen1.pars.length > 0) new Line(true, 40, 50, 40);
 	for (let i = 0; i < rels.gen1.pars.length; i++) {
@@ -101,7 +116,27 @@ async function selectPerson(id) {
 	}
 	let offset = -Math.floor(rels.gen2.length/2);
 	if (rels.gen2.length % 2 == 0) offset += 0.5;
-	for (let i = 0; i < rels.gen2.length; i++) new Person(rels.gen2[i], 50+15*(i+offset), 80);
+	for (let i = 0; i < rels.gen2.length; i++) {
+		new Person(rels.gen2[i], 50+11*(i+offset), 80);
+		new Line(false, 60, 80, 50+11*(i+offset));
+		let begin = Math.min(50+11*(i+offset), 50);
+		let end = Math.max(50+11*(i+offset), 50);
+		new Line(true, begin, end, 60);
+
+		let children = false;
+		let fams = await getFams(await fetchGed());
+		for (let j = 0; j < rels.gen2[i].fams.length; j++) {
+			chil = findFamByRec(rels.gen2[i].fams[j], fams)[0].chil;
+			if (chil && chil.length>0) children = true;
+		}
+
+		if (children) new Line(false, 80, 100, 50+11*(i+offset), "", true);
+	}
+	if (rels.gen2.length > 0) {
+		new Line(false, 40, 60, 40);
+		new Line(true, 40, 50, 60);
+	}
+
 
 }
 
