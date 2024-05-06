@@ -8,6 +8,16 @@ class Person {
 		this.el.onclick = () => {selectPerson("@I"+indi.rfn+"@");};
 		document.documentElement.getElementsByClassName("persons")[0].appendChild(this.el);
 
+		let infoButton = document.createElement("span");
+		this.el.appendChild(infoButton);
+		infoButton.innerText = "◯";
+		infoButton.classList.add("infoButton");
+		let tooltip = document.createElement("span");
+		tooltip.innerText = "more info";
+		tooltip.classList.add("tooltip");
+		infoButton.appendChild(tooltip);
+		infoButton.onclick = () => {alert("more info")};
+
 		if (!indi.death && !indi.birth) options.hideDates = true;
 
 		this.el.style.top = y+"%";
@@ -48,7 +58,7 @@ class Person {
 		}
 
 
-		
+
 		//  ◯
 	}
 }
@@ -137,7 +147,9 @@ async function selectPerson(id) {
 		new Line(true, 40, 50, 60);
 	}
 
-
+	if (rels.gen1.sel.note) {
+		document.getElementById("note").innerText = rels.gen1.sel.note;
+	} else document.getElementById("note").innerText = "";
 }
 
 window.onload = () => {
