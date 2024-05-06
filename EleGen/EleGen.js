@@ -17,6 +17,7 @@ class Person {
 		tooltip.classList.add("tooltip");
 		infoButton.appendChild(tooltip);
 		infoButton.onclick = () => {alert("more info")};
+		
 
 		if (!indi.death && !indi.birth) options.hideDates = true;
 
@@ -235,9 +236,11 @@ async function getIndis(lines) {
 }
 
 function findByName(name, indis) {
+	let result = [];
 	for (let i = 0; i < indis.length; i++) 
-		if (indis[i].name.includes(name))
-			return indis[i];
+		if (indis[i].name.toLowerCase().includes(name.toLowerCase()))
+			result.push(indis[i]);
+	return result;
 }
 
 function findByRec(id, indis) {
@@ -346,6 +349,12 @@ async function getFams(lines) {
 	return fams;
 }
 
+let indis = [];
+
+async function search(value) {
+	if (indis.length == 0) indis = await getIndis(await fetchGed());
+	console.log(findByName(value, indis));	
+}
 
 class INDI {
 	constructor(id) {
@@ -360,3 +369,4 @@ class FAM {
 		this.chil = [];
 	}
 }
+
