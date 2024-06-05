@@ -1,6 +1,6 @@
 * {
 	background-color: #081017;
-	/*overflow: hidden;*/
+	overflow: hidden;
 }
 
 span {
@@ -82,4 +82,50 @@ textarea {
   
 .infoButton:hover .tooltip {
 	visibility: visible;
+}
+
+#leftGrad {
+	left: 0;
+    width: 10%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 100;
+	background: linear-gradient(90deg, rgba(8,16,23,1) 0%, rgba(8,16,23,1) 35%, rgba(8,16,23,0) 100%);
+}
+
+#rightGrad {
+	right: 0;
+    width: 10%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 100;
+	background: linear-gradient(270deg, rgba(8,16,23,1) 0%, rgba(8,16,23,1) 35%, rgba(8,16,23,0) 100%);
+}
+
+#leftScrBut {
+	left: 0;
+    width: 3.5%;
+    height: 10%;
+    position: absolute;
+    bottom: 15%;
+    z-index: 101;
+	color: white;
+	font-size: 300%;
+	text-align: center;
+	display: none;
+}
+
+#rightScrBut {
+	right: 0;
+    width: 3.5%;
+    height: 10%;
+    position: absolute;
+    bottom: 15%;
+    z-index: 101;
+	color: white;
+	font-size: 300%;
+	text-align: center;
+	display: none;
 }
