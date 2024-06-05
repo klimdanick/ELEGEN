@@ -92,6 +92,8 @@ class Line{
 	}
 }
 
+let childrenObjects = [];
+
 async function selectPerson(id) {
 	document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
 	document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
@@ -124,14 +126,15 @@ async function selectPerson(id) {
 		new Line(true, 20, 40, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), label);
 		new Line(false, Math.min(40+10*(i-Math.floor(rels.gen1.pars.length/2)), 40), Math.max(40+10*(i-Math.floor(rels.gen1.pars.length/2)), 40), 40);
 	}
+	childrenObjects = [];
 	let offset = -Math.floor(rels.gen2.length/2);
 	if (rels.gen2.length % 2 == 0) offset += 0.5;
 	for (let i = 0; i < rels.gen2.length; i++) {
-		new Person(rels.gen2[i], 50+11*(i+offset), 80);
-		new Line(false, 60, 80, 50+11*(i+offset));
+		childrenObjects.push(new Person(rels.gen2[i], 50+11*(i+offset), 80));
+		childrenObjects.push(new Line(false, 60, 80, 50+11*(i+offset)));
 		let begin = Math.min(50+11*(i+offset), 50);
 		let end = Math.max(50+11*(i+offset), 50);
-		new Line(true, begin, end, 60);
+		childrenObjects.push(new Line(true, begin, end, 60));
 
 		let children = false;
 		let fams = await getFams(await fetchGed());
@@ -140,7 +143,7 @@ async function selectPerson(id) {
 			if (chil && chil.length>0) children = true;
 		}
 
-		if (children) new Line(false, 80, 100, 50+11*(i+offset), "", true);
+		if (children) childrenObjects.push(new Line(false, 80, 100, 50+11*(i+offset), "", true));
 	}
 	if (rels.gen2.length > 0) {
 		new Line(false, 40, 60, 40);
@@ -150,6 +153,48 @@ async function selectPerson(id) {
 	if (rels.gen1.sel.note) {
 		document.getElementById("note").innerText = rels.gen1.sel.note;
 	} else document.getElementById("note").innerText = "";
+
+	let leastX = 100;
+	let mostX = 0;
+
+	for (let i = 0; i < childrenObjects.length; i++) {
+		leastX = Math.min(leastX, parseFloat(childrenObjects[i].el.style.left))
+		mostX = Math.max(mostX, parseFloat(childrenObjects[i].el.style.left))
+	}
+	console.table({mostX, leastX});
+	if (leastX < MinLimit) document.getElementById("leftScrBut").style.display = "block";
+	else document.getElementById("leftScrBut").style.display = "none";
+	if (mostX > MaxLimit) document.getElementById("rightScrBut").style.display = "block";
+	else document.getElementById("rightScrBut").style.display = "none";
+}
+
+let MaxLimit = 86;
+let MinLimit = 13;
+
+function scrollChildren(x) {
+	let leastX = 100;	// 13
+	let mostX = 0;		// 86
+
+	for (let i = 0; i < childrenObjects.length; i++) {
+		leastX = Math.min(leastX, parseFloat(childrenObjects[i].el.style.left))
+		mostX = Math.max(mostX, parseFloat(childrenObjects[i].el.style.left))
+	}
+	console.table({mostX, leastX});
+	if (leastX > MinLimit && x > 0) return;
+	if (mostX < MaxLimit && x < 0) return;
+	let i = 0;
+	
+	let intervalID = setInterval(() => {
+		let offset = (Math.sign(x)*0.5)
+		for (let i = 0; i < childrenObjects.length; i++) {
+			childrenObjects[i].el.style.left = parseFloat(childrenObjects[i].el.style.left) + offset + "%";
+		}
+		i+= offset;
+		if (x > 0 && i >= x) clearInterval(intervalID);
+		if (x < 0 && i <= x) clearInterval(intervalID);
+	}, 10);
+
+
 }
 
 window.onload = () => {
