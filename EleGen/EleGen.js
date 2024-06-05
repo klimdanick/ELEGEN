@@ -1,12 +1,14 @@
 class Person {
-	constructor(indi, x, y, options = {"hideDates": false}) {
+	constructor(indi, x, y, options = {"hideDates": false}, parentElement = null) {
 		if (!indi) return;
 		this.indi = indi;
 		this.el = document.createElement("div");
 		this.el.classList.add("person");
 		this.el.classList.add(indi.sex);
 		this.el.onclick = () => {selectPerson("@I"+indi.rfn+"@");};
-		document.documentElement.getElementsByClassName("persons")[0].appendChild(this.el);
+
+		if (parentElement == null) document.documentElement.getElementsByClassName("persons")[0].appendChild(this.el);
+		else parentElement.appendChild(this.el);
 
 		let infoButton = document.createElement("span");
 		this.el.appendChild(infoButton);
@@ -17,6 +19,7 @@ class Person {
 		tooltip.classList.add("tooltip");
 		infoButton.appendChild(tooltip);
 		infoButton.onclick = () => {alert("more info")};
+		
 
 		if (!indi.death && !indi.birth) options.hideDates = true;
 
@@ -95,6 +98,7 @@ class Line{
 let childrenObjects = [];
 
 async function selectPerson(id) {
+	document.getElementById("searchRes").style.display = "none";
 	document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
 	document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
 	let lines = await fetchGed();
@@ -280,9 +284,11 @@ async function getIndis(lines) {
 }
 
 function findByName(name, indis) {
+	let result = [];
 	for (let i = 0; i < indis.length; i++) 
-		if (indis[i].name.includes(name))
-			return indis[i];
+		if (indis[i].name.toLowerCase().includes(name.toLowerCase()))
+			result.push(indis[i]);
+	return result;
 }
 
 function findByRec(id, indis) {
@@ -391,6 +397,26 @@ async function getFams(lines) {
 	return fams;
 }
 
+let indis = [];
+
+async function search() {
+	let value = document.getElementById("searchbar").value;
+	if (indis.length == 0) indis = await getIndis(await fetchGed());
+	let result = findByName(value, indis);
+	console.log(result);	
+	let parentEl = document.getElementById("searchRes");
+	parentEl.innerHTML = "";
+	if (result.length > 0) {
+		document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
+		document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
+		for (let i = 0; i < result.length; i++) {
+			let x = i % 5 + 1;
+			let y = Math.floor(i / 5)+1;
+			new Person(result[i], x*15, y*25, false, parentEl);
+		}
+	}
+	parentEl.style.display = "block";
+}
 
 class INDI {
 	constructor(id) {
@@ -405,3 +431,4 @@ class FAM {
 		this.chil = [];
 	}
 }
+
