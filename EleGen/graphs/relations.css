@@ -19,6 +19,21 @@ input[type=text] {
 	color: white;
 }
 
+input[type=button] {
+	position: absolute;
+	left: 220px;
+	top: 10px;
+	padding: 6px;
+	border-color: #299ad0;
+	border-width: 5px;
+	border-style: solid;
+	border-radius: 10px;
+	margin-top: 8px;
+	margin-right: 16px;
+	font-size: 17px;
+	color: white;
+}
+
 span {
 	color: white;
 	font: 46px / 50px D-DIN-Bold, Arial, Verdana, sans-serif;
@@ -41,7 +56,8 @@ span {
 	margin: 0;
 	font-size: 100%;
 	position:absolute;
-	transform: translate(-50%, -50%)
+	transform: translate(-50%, -50%);
+	z-index: 5;
 }
 
 .m {
@@ -144,4 +160,14 @@ textarea {
 	font-size: 300%;
 	text-align: center;
 	display: none;
+}
+
+#searchRes {
+	position: absolute;
+	left: 10%;
+	height: 10;
+	width: 80%;
+	height: 90%;
+	overflow-y: scroll;
+	z-index: 4;
 }
