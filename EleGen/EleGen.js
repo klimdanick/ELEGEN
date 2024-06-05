@@ -379,8 +379,10 @@ async function getFams(lines) {
 				fam.wife = lines[i].substring(7, lines[i].length);
 			if (lines[i].includes("RFN"))
 				fam.rfn = lines[i].substring(6, lines[i].length);
+			if (lines[i].includes("MARB")) continue;
 			if (lines[i].includes("MARR")) {
 				let mar = {};
+				if (fam.mar) mar = fam.mar;
 				for (i++; i < lines.length; i++) {
 					if (!lines[i].startsWith("2")) {i--; break;}
 					if (lines[i].includes("TYPE"))
@@ -391,6 +393,8 @@ async function getFams(lines) {
 						mar.plac = lines[i].substring(7, lines[i].length);
 					if (lines[i].includes("SOUR"))
 						mar.src = lines[i].substring(7, lines[i].length);
+					if (lines[i].includes("_CHUR"))
+						mar.chur = lines[i].substring(8, lines[i].length);
 				}
 				fam.mar = mar;
 			}
