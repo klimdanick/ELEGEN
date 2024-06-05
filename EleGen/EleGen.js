@@ -9,7 +9,7 @@ class Person {
 		document.documentElement.getElementsByClassName("persons")[0].appendChild(this.el);
 
 		let infoButton = document.createElement("span");
-		this.el.appendChild(infoButton);
+		//this.el.appendChild(infoButton);
 		infoButton.innerText = "◯";
 		infoButton.classList.add("infoButton");
 		let tooltip = document.createElement("span");
@@ -198,13 +198,15 @@ function scrollChildren(x) {
 }
 
 window.onload = () => {
-	selectPerson("@I1296@");
+	//selectPerson("@I1296@");
+	selectPerson("@I1327@");
 }
 
 async function fetchGed() {
 	//if (lines != []) return lines;
 	await fetch('ged.txt').then((response) => response.text()).then((data) => {
 		lines = data.split("\r\n");
+		if (lines.length <= 1) lines = data.split("\n");
 	});
 	return lines;
 }
