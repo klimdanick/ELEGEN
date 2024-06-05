@@ -6,9 +6,10 @@
 	</head>
 	
 	<body>
-		
 		<!-- ELEGEN -->
-		<div id="EleGen"><div id="menu" style="z-index:100;"></div></div>
+		<input type="text" placeholder="Name..." style="z-index: 102;" id="searchbar">
+		<input type="button" value="search" onclick="search()" style="z-index: 102;">
+		<!--div id="EleGen"><div id="menu" style="z-index:100;"></div></div-->
 		
 		<!--script src="http://stamboom.klimda.nl/stamboom/EleGen/graphs/parenteel.js"></script>
 		<script src="http://stamboom.klimda.nl/stamboom/EleGen/graphs/kwartierstaat.js"></script>
@@ -21,7 +22,7 @@
 		<div id="rightGrad"></div>
 		<div id="leftScrBut" onclick="scrollChildren(30)">&#60</div>
 		<div id="rightScrBut" onclick="scrollChildren(-30)">&#62</div>
-		
+		<div id="searchRes"></div>
 		<div class="lines"></div>
 		<div class="persons"></div>
 		<textarea id="note" readonly></textarea>
