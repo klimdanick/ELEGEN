@@ -156,7 +156,8 @@ async function selectPerson(id) {
 
 	if (rels.gen1.sel.note) {
 		document.getElementById("note").innerText = rels.gen1.sel.note;
-	} else document.getElementById("note").innerText = "";
+		document.getElementById("note").style.display = "block";
+	} else document.getElementById("note").style.display = "none";
 
 	let leastX = 100;
 	let mostX = 0;
@@ -414,7 +415,7 @@ async function search() {
 		for (let i = 0; i < result.length; i++) {
 			let x = i % 5 + 1;
 			let y = Math.floor(i / 5)+1;
-			new Person(result[i], x*15, y*25, false, parentEl);
+			new Person(result[i], x*15, y*25, {"hideDates": false}, parentEl);
 		}
 	}
 	parentEl.style.display = "block";
