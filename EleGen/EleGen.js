@@ -98,6 +98,7 @@ class Line{
 let childrenObjects = [];
 
 async function selectPerson(id) {
+	document.getElementById("titleScreen").style.display = "none";
 	document.getElementById("searchRes").style.display = "none";
 	document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
 	document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
@@ -204,7 +205,9 @@ function scrollChildren(x) {
 
 window.onload = () => {
 	//selectPerson("@I1296@");
-	selectPerson("@I1327@");
+	//selectPerson("@I1327@");
+
+	fetchGed().then((lines) => getIndis(lines)).then((indis) => findByName("Danick", indis)).then((res) => {new Person(res[0], 50, 65)});
 }
 
 async function fetchGed() {
