@@ -125,9 +125,18 @@ async function kwartierStaat(id) {
 		}
 		if (currentGen.length <= 0) break;
 		gens.push(currentGen);
-		console.table(currentGen);
+		//console.table(currentGen);
 	}
 	console.log(gens);
+	for (let i = 0; i < gens.length && i < 3; i++) {
+		for (let j = 0; j < gens[i].length; j++) {
+			let p = new Person(gens[i][j], 50, 90, {"hideDates": true})
+			//p.el.style.transformOrigin = `-50% `+(-50-i*100)+`%`;
+			p.el.style.transform = `rotate(`+10/*(j/gens[i].length*180-90)*/+`deg)`;
+			p.el.style.transform+= `translate(-50%, `+(-50-i*100)+`%)`;
+		}
+	}
+
 }
 
 async function selectPerson(id) {
