@@ -46,7 +46,8 @@ class Person {
 			this.el.appendChild(text);
 			this.birth = document.createElement("span");
 			this.birth.classList.add("birth");
-			this.birth.innerText = indi.birth.date + "\n" + indi.birth.plac;
+			if (indi.birth.date) this.birth.innerText = indi.birth.date + "\n";
+			if (indi.birth.plac) this.birth.innerText += indi.birth.plac;
 			this.el.appendChild(this.birth);
 		} if (this.indi.death) {
 			let text = document.createElement("span");
@@ -56,7 +57,8 @@ class Person {
 			this.el.appendChild(text);
 			this.death = document.createElement("span");
 			this.death.classList.add("death");
-			this.death.innerText = indi.death.date + "\n" + indi.death.plac;
+			if (indi.death.date) this.death.innerText = indi.death.date + "\n";
+			if (indi.death.plac) this.death.innerText += indi.death.plac;
 			this.el.appendChild(this.death);
 		}
 
@@ -278,8 +280,12 @@ async function getIndis(lines) {
 			if (lines[i].includes("NOTE")) {
 				let note = lines[i].substring(7, lines[i].length);
 				for (i++; i < lines.length; i++) {
-					if (!lines[i].startsWith("2")) {i--;break;}
-					note += "\n" + lines[i].substring(7, lines[i].length);
+					if (lines[i].includes("CONT")) note += "\n" + lines[i].substring(7, lines[i].length);
+					else if (lines[i].includes("CONC")) note += lines[i].substring(7, lines[i].length);
+					else {
+						i--;
+						break;
+					}
 				}
 				indi.note = note;
 			}
