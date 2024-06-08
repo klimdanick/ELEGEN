@@ -10,8 +10,9 @@
 
 async function _TEST_Indis_length() {
     let pass = true;
+    let ged = await fetchGed();
     let time = Date.now();
-    let indis = await getIndis(await fetchGed());
+    let indis = await getIndis(ged);
     time = Date.now() - time;
     pass = indis.length == 5559;
 

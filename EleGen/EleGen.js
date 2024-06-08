@@ -46,8 +46,8 @@ class Person {
 			this.el.appendChild(text);
 			this.birth = document.createElement("span");
 			this.birth.classList.add("birth");
-			if (indi.birth.date) this.birth.innerText = indi.birth.date + "\n";
-			if (indi.birth.plac) this.birth.innerText += indi.birth.plac;
+			if (indi.birth.date) this.birth.innerText = indi.birth.date;
+			if (indi.birth.plac) this.birth.innerText += "\n" + indi.birth.plac;
 			this.el.appendChild(this.birth);
 		} if (this.indi.death) {
 			let text = document.createElement("span");
@@ -57,8 +57,8 @@ class Person {
 			this.el.appendChild(text);
 			this.death = document.createElement("span");
 			this.death.classList.add("death");
-			if (indi.death.date) this.death.innerText = indi.death.date + "\n";
-			if (indi.death.plac) this.death.innerText += indi.death.plac;
+			if (indi.death.date) this.death.innerText = indi.death.date;
+			if (indi.death.plac) this.death.innerText += "\n" + indi.death.plac;
 			this.el.appendChild(this.death);
 		}
 
@@ -100,11 +100,12 @@ class Line{
 let childrenObjects = [];
 
 async function selectPerson(id) {
+	document.getElementById("titleScreen").style.display = "none";
 	document.getElementById("searchRes").style.display = "none";
 	document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
 	document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
-	let lines = await fetchGed();
-	let indis = await getIndis(lines);
+	//let lines = await fetchGed();
+	//let indis = await getIndis(lines);
 	let fams = await getFams(lines);
 	let rels = await buildRel(id, indis, fams);
 	console.log(rels);
@@ -143,7 +144,6 @@ async function selectPerson(id) {
 		childrenObjects.push(new Line(true, begin, end, 60));
 
 		let children = false;
-		let fams = await getFams(await fetchGed());
 		for (let j = 0; j < rels.gen2[i].fams.length; j++) {
 			chil = findFamByRec(rels.gen2[i].fams[j], fams)[0].chil;
 			if (chil && chil.length>0) children = true;
@@ -158,7 +158,8 @@ async function selectPerson(id) {
 
 	if (rels.gen1.sel.note) {
 		document.getElementById("note").innerText = rels.gen1.sel.note;
-	} else document.getElementById("note").innerText = "";
+		document.getElementById("note").style.display = "block";
+	} else document.getElementById("note").style.display = "none";
 
 	let leastX = 100;
 	let mostX = 0;
@@ -205,12 +206,26 @@ function scrollChildren(x) {
 
 window.onload = () => {
 	//selectPerson("@I1296@");
-	selectPerson("@I1327@");
+	//selectPerson("@I1327@");
+	buildFrontpage();	
+}
+
+async function buildFrontpage() {
+	let title = await fetch("https://vps.klimdanick.nl/ELEGEN/title/"+window.location.hostname)
+	title = await title.text();
+	let text = await fetch("https://vps.klimdanick.nl/ELEGEN/text/"+window.location.hostname)
+	text = await text.text();
+	//console.log(title + " | " + text);
+	document.getElementById("titleScreen").innerHTML = `<h1>${title}</h1><p>${text}</p>`;
+	fetchGed().then((lines) => getIndis(lines)).then((indis) => findByName("Danick", indis)).then((res) => {new Person(res[0], 50, 65)});
 }
 
 async function fetchGed() {
 	//if (lines != []) return lines;
-	await fetch('ged.txt').then((response) => response.text()).then((data) => {
+	var myHeaders = new Headers();
+	myHeaders.append('Content-Type','text/plain; charset=UTF-8');
+
+	await fetch('ged.txt', myHeaders).then((response) => response.text()).then((data) => {
 		lines = data.split("\r\n");
 		if (lines.length <= 1) lines = data.split("\n");
 	});
@@ -219,12 +234,12 @@ async function fetchGed() {
 ///I1561   /// good example indi  I1335
 
 async function getIndis(lines) {
-	let INDIS = [];
+	indis = [];
 	for (let i = 0; i < lines.length; i++) {
 		if (!lines[i].startsWith("0")) continue;
 		if (!lines[i].includes("INDI")) continue;
 		let indi = new INDI(lines[i].split(" ")[1]);
-		INDIS.push(indi);
+		indis.push(indi);
 		for (i++; i < lines.length; i++) {
 			if (lines[i].startsWith("0")) {i--; break;}
 			if (!lines[i].startsWith("1")) continue;
@@ -288,7 +303,7 @@ async function getIndis(lines) {
 			
 		}
 	}
-	return INDIS;
+	return indis;
 }
 
 function findByName(name, indis) {
@@ -368,7 +383,7 @@ function buildRel(indi, indis, fams) {
 
 
 async function getFams(lines) {
-	let fams = [];
+	fams = [];
 	for (let i = 0; i < lines.length; i++) {
 		if (!lines[i].startsWith("0")) continue;
 		if (!lines[i].includes("FAM")) continue;
@@ -407,9 +422,11 @@ async function getFams(lines) {
 		fams.push(fam);
 	}
 	return fams;
+
 }
 
 let indis = [];
+let fams = [];
 
 async function search() {
 	let value = document.getElementById("searchbar").value;
@@ -424,7 +441,7 @@ async function search() {
 		for (let i = 0; i < result.length; i++) {
 			let x = i % 5 + 1;
 			let y = Math.floor(i / 5)+1;
-			new Person(result[i], x*15, y*25, false, parentEl);
+			new Person(result[i], x*15, y*25, {"hideDates": false}, parentEl);
 		}
 	}
 	parentEl.style.display = "block";
