@@ -222,7 +222,10 @@ async function buildFrontpage() {
 
 async function fetchGed() {
 	//if (lines != []) return lines;
-	await fetch('ged.txt').then((response) => response.text()).then((data) => {
+	var myHeaders = new Headers();
+	myHeaders.append('Content-Type','text/plain; charset=UTF-8');
+
+	await fetch('ged.txt', myHeaders).then((response) => response.text()).then((data) => {
 		lines = data.split("\r\n");
 		if (lines.length <= 1) lines = data.split("\n");
 	});
