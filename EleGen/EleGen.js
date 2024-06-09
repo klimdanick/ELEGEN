@@ -124,7 +124,7 @@ async function selectPerson(id) {
 	if (rels.gen0.wife || rels.gen0.husb)
 		new Line(false, 15, 40, 50);
 	new Person(rels.gen1.sel, 50, 40);
-	if (rels.gen1.pars.length > 0) new Line(true, 40, 50, 40);
+	if (rels.gen1.pars.length > 0 || rels.gen2.length > 0) new Line(true, 40, 50, 40);
 	for (let i = 0; i < rels.gen1.pars.length; i++) {
 		new Person(rels.gen1.pars[i], 20, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), {"hideDates": rels.gen1.pars.length >= 2});
 		let label = "";
