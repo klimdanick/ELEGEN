@@ -88,6 +88,7 @@ textarea {
 	font-size: 100%;
 	line-height: 1.5em;
 	z-index: 0;
+	display: none;
 }
 
 .infoButton {
@@ -170,4 +171,35 @@ textarea {
 	height: 90%;
 	overflow-y: scroll;
 	z-index: 4;
+	display: none;
+}
+
+#titleScreen {
+	width: 100%;
+	height: 100%;
+	color: white;
+}
+
+#titleScreen h1 {
+	text-align: center;
+	font: 46px / 50px D-DIN-Bold, Arial, Verdana, sans-serif;
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	font-size: 4em;
+	top: 10%;
+	font-weight: bold;
+}
+
+#titleScreen p {
+	text-align: center;
+	font: 46px / 50px D-DIN-Bold, Arial, Verdana, sans-serif;
+	position: absolute;
+	width: 50%;
+	text-align: center;
+	font-size: 1em;
+	left: 50%;
+	top: 30%;
+	font-weight: bold;
+	transform: translate(-50%, -50%);
 }
