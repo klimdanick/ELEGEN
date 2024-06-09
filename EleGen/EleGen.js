@@ -1,3 +1,23 @@
+let indis = [];
+let fams = [];
+
+window.onload = () => {
+	//selectPerson("@I1296@");
+	//selectPerson("@I1327@");
+	buildFrontpage();	
+}
+
+async function buildFrontpage() {
+	let title = await fetch("https://vps.klimdanick.nl/ELEGEN/title/"+window.location.hostname)
+	title = await title.text();
+	let text = await fetch("https://vps.klimdanick.nl/ELEGEN/text/"+window.location.hostname)
+	text = await text.text();
+	//console.log(title + " | " + text);
+	document.getElementById("titleScreen").innerHTML = `<h1>${title}</h1><p>${text}</p>`;
+	fetchGed().then((lines) => getIndis(lines)).then((indis) => findByName("Danick", indis)).then((res) => {new Person(res[0], 50, 65)});
+}
+
+
 class Person {
 	constructor(indi, x, y, options = {"hideDates": false}, parentElement = null) {
 		if (!indi) return;
@@ -96,172 +116,6 @@ class Line{
 		document.documentElement.getElementsByClassName("lines")[0].appendChild(this.el);
 	}
 }
-
-let childrenObjects = [];
-
-async function kwartierStaat(id) {
-	document.getElementById("searchRes").style.display = "none";
-	document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
-	document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
-	let lines = await fetchGed();
-	let indis = await getIndis(lines);
-	let fams = await getFams(lines);
-	let rels = await buildRel(id, indis, fams);
-	let gens = [];
-	gens.push([rels.gen1.sel]);
-	while (true) {
-		let currentGen = [];
-		let lastGen = gens[gens.length-1]
-		//console.log(lastGen);
-		for (let i = 0; i < lastGen.length; i++) {
-			let p = lastGen[i]
-			let r = findFamByRec([p.famc], fams)[0];
-			if (!r) continue;
-			if (r.husb) 
-				if (typeof r.husb === 'string') currentGen.push(findByRec(r.husb, indis))
-				else currentGen.push(r.husb)
-			if (r.wife) 
-				if (typeof r.wife === 'string') currentGen.push(findByRec(r.wife, indis))
-				else currentGen.push(r.wife)
-			
-		}
-		if (currentGen.length <= 0) break;
-		gens.push(currentGen);
-		//console.table(currentGen);
-	}
-	console.log(gens);
-	for (let i = 0; i < gens.length && i < 3; i++) {
-		for (let j = 0; j < gens[i].length; j++) {
-			let p = new Person(gens[i][j], 50, 90, {"hideDates": true})
-			//p.el.style.transformOrigin = `-50% `+(-50-i*100)+`%`;
-			p.el.style.transform = `rotate(`+10/*(j/gens[i].length*180-90)*/+`deg)`;
-			p.el.style.transform+= `translate(-50%, `+(-50-i*100)+`%)`;
-		}
-	}
-
-}
-
-async function selectPerson(id) {
-	document.getElementById("titleScreen").style.display = "none";
-	document.getElementById("searchRes").style.display = "none";
-	document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
-	document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
-	//let lines = await fetchGed();
-	//let indis = await getIndis(lines);
-	let fams = await getFams(lines);
-	let rels = await buildRel(id, indis, fams);
-	console.log(rels);
-
-	if (rels.gen0.husb) {
-	new Person(rels.gen0.husb, 33, 15);
-	if (rels.gen0.husb) new Line(true, 33, 50, 15);
-	if (rels.gen0.husb.famc) new Line(false, 0, 15, 33, "", true);
-	}
-
-	if (rels.gen0.wife) {
-	new Person(rels.gen0.wife, 66, 15);
-	if (rels.gen0.wife) new Line(true, 50, 66, 15);
-	if (rels.gen0.wife.famc) new Line(false, 0, 15, 66, "", true);
-	}
-
-	if (rels.gen0.wife || rels.gen0.husb)
-		new Line(false, 15, 40, 50);
-	new Person(rels.gen1.sel, 50, 40);
-	if (rels.gen1.pars.length > 0 || rels.gen2.length > 0) new Line(true, 40, 50, 40);
-	for (let i = 0; i < rels.gen1.pars.length; i++) {
-		new Person(rels.gen1.pars[i], 20, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), {"hideDates": rels.gen1.pars.length >= 2});
-		let label = "";
-		if (rels.gen1.pars[i].mar) label = rels.gen1.pars[i].mar.date + "\n" + rels.gen1.pars[i].mar.plac;
-		new Line(true, 20, 40, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), label);
-		new Line(false, Math.min(40+10*(i-Math.floor(rels.gen1.pars.length/2)), 40), Math.max(40+10*(i-Math.floor(rels.gen1.pars.length/2)), 40), 40);
-	}
-	childrenObjects = [];
-	let offset = -Math.floor(rels.gen2.length/2);
-	if (rels.gen2.length % 2 == 0) offset += 0.5;
-	for (let i = 0; i < rels.gen2.length; i++) {
-		childrenObjects.push(new Person(rels.gen2[i], 50+11*(i+offset), 80));
-		childrenObjects.push(new Line(false, 60, 80, 50+11*(i+offset)));
-		let begin = Math.min(50+11*(i+offset), 50);
-		let end = Math.max(50+11*(i+offset), 50);
-		childrenObjects.push(new Line(true, begin, end, 60));
-
-		let children = false;
-		for (let j = 0; j < rels.gen2[i].fams.length; j++) {
-			chil = findFamByRec(rels.gen2[i].fams[j], fams)[0].chil;
-			if (chil && chil.length>0) children = true;
-		}
-
-		if (children) childrenObjects.push(new Line(false, 80, 100, 50+11*(i+offset), "", true));
-	}
-	if (rels.gen2.length > 0) {
-		new Line(false, 40, 60, 40);
-		new Line(true, 40, 50, 60);
-	}
-
-	if (rels.gen1.sel.note) {
-		document.getElementById("note").innerText = rels.gen1.sel.note;
-		document.getElementById("note").style.display = "block";
-	} else document.getElementById("note").style.display = "none";
-
-	let leastX = 100;
-	let mostX = 0;
-
-	for (let i = 0; i < childrenObjects.length; i++) {
-		leastX = Math.min(leastX, parseFloat(childrenObjects[i].el.style.left))
-		mostX = Math.max(mostX, parseFloat(childrenObjects[i].el.style.left))
-	}
-	console.table({mostX, leastX});
-	if (leastX < MinLimit) document.getElementById("leftScrBut").style.display = "block";
-	else document.getElementById("leftScrBut").style.display = "none";
-	if (mostX > MaxLimit) document.getElementById("rightScrBut").style.display = "block";
-	else document.getElementById("rightScrBut").style.display = "none";
-}
-
-let MaxLimit = 86;
-let MinLimit = 13;
-
-function scrollChildren(x) {
-	let leastX = 100;	// 13
-	let mostX = 0;		// 86
-
-	for (let i = 0; i < childrenObjects.length; i++) {
-		leastX = Math.min(leastX, parseFloat(childrenObjects[i].el.style.left))
-		mostX = Math.max(mostX, parseFloat(childrenObjects[i].el.style.left))
-	}
-	console.table({mostX, leastX});
-	if (leastX > MinLimit && x > 0) return;
-	if (mostX < MaxLimit && x < 0) return;
-	let i = 0;
-	
-	let intervalID = setInterval(() => {
-		let offset = (Math.sign(x)*0.5)
-		for (let i = 0; i < childrenObjects.length; i++) {
-			childrenObjects[i].el.style.left = parseFloat(childrenObjects[i].el.style.left) + offset + "%";
-		}
-		i+= offset;
-		if (x > 0 && i >= x) clearInterval(intervalID);
-		if (x < 0 && i <= x) clearInterval(intervalID);
-	}, 10);
-
-
-}
-
-window.onload = () => {
-	//selectPerson("@I1296@");
-	//selectPerson("@I1327@");
-	buildFrontpage();	
-}
-
-async function buildFrontpage() {
-	let title = await fetch("https://vps.klimdanick.nl/ELEGEN/title/"+window.location.hostname)
-	title = await title.text();
-	let text = await fetch("https://vps.klimdanick.nl/ELEGEN/text/"+window.location.hostname)
-	text = await text.text();
-	//console.log(title + " | " + text);
-	document.getElementById("titleScreen").innerHTML = `<h1>${title}</h1><p>${text}</p>`;
-	fetchGed().then((lines) => getIndis(lines)).then((indis) => findByName("Danick", indis)).then((res) => {new Person(res[0], 50, 65)});
-}
-
 async function fetchGed() {
 	//if (lines != []) return lines;
 	var myHeaders = new Headers();
@@ -346,29 +200,6 @@ async function getIndis(lines) {
 		}
 	}
 	return indis;
-}
-
-function findByName(name, indis) {
-	let result = [];
-	for (let i = 0; i < indis.length; i++) 
-		if (indis[i].name.toLowerCase().includes(name.toLowerCase()))
-			result.push(indis[i]);
-	return result;
-}
-
-function findByRec(id, indis) {
-	for (let i = 0; i < indis.length; i++) 
-		if (indis[i].id == id)
-			return indis[i];
-	return null; 
-}
-
-function findFamByRec(ids, fams) {
-	let fams_ = [];
-	for (let i = 0; i < fams.length; i++) 
-		if (ids.includes(fams[i].id))
-			fams_.push(fams[i]);
-	return fams_; 
 }
 
 function buildFam(fam, indis) {
@@ -468,28 +299,6 @@ async function getFams(lines) {
 	}
 	return fams;
 
-}
-
-let indis = [];
-let fams = [];
-
-async function search() {
-	let value = document.getElementById("searchbar").value;
-	if (indis.length == 0) indis = await getIndis(await fetchGed());
-	let result = findByName(value, indis);
-	console.log(result);	
-	let parentEl = document.getElementById("searchRes");
-	parentEl.innerHTML = "";
-	if (result.length > 0) {
-		document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
-		document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
-		for (let i = 0; i < result.length; i++) {
-			let x = i % 5 + 1;
-			let y = Math.floor(i / 5)+1;
-			new Person(result[i], x*15, y*25, {"hideDates": false}, parentEl);
-		}
-	}
-	parentEl.style.display = "block";
 }
 
 class INDI {
