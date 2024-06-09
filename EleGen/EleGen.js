@@ -337,8 +337,11 @@ function buildRel(indi, indis, fams) {
 	
 	let pars = [];
 	for (let i = 0; i < famS.length; i++) {
-	 	pars.push(famS[i].wife.rfn != p.rfn ? famS[i].wife : famS[i].husb);
-		pars[i].mar = famS[i].mar;
+		console.log(famS[i]);
+		if (famS[i].wife) {
+	 		pars.push(famS[i].wife.rfn != p.rfn ? famS[i].wife : famS[i].husb);
+			pars[i].mar = famS[i].mar;
+		}
 	}
 	let dad = null;
 	let mom = null;
