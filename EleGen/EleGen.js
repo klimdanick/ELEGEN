@@ -14,18 +14,22 @@ async function buildFrontpage() {
 	text = await text.text();
 	//console.log(title + " | " + text);
 	document.getElementById("titleScreen").innerHTML = `<h1>${title}</h1><p>${text}</p>`;
-	fetchGed().then((lines) => getIndis(lines)).then((indis) => findByName("Danick", indis)).then((res) => {new Person(res[0], 50, 65)});
+	let lines = await fetchGed();
+	getIndis(lines);
+	getFams(lines);
+	let res = findByName("Danick", indis)
+	new Person(res[0], 50, 65);
 }
 
 
 class Person {
-	constructor(indi, x, y, options = {"hideDates": false}, parentElement = null) {
+	constructor(indi, x, y, options = {"hideDates": false, "onclick": "selectPerson(\"@I\"+indi.rfn+\"@\");"}, parentElement = null) {
 		if (!indi) return;
 		this.indi = indi;
 		this.el = document.createElement("div");
 		this.el.classList.add("person");
 		this.el.classList.add(indi.sex);
-		this.el.onclick = () => {selectPerson("@I"+indi.rfn+"@");};
+		this.el.onclick = () => {console.log(options.onclick); eval(options.onclick)}
 
 		if (parentElement == null) document.documentElement.getElementsByClassName("persons")[0].appendChild(this.el);
 		else parentElement.appendChild(this.el);
@@ -225,10 +229,10 @@ function buildRel(indi, indis, fams) {
 	
 	let pars = [];
 	for (let i = 0; i < famS.length; i++) {
-		console.log(famS[i]);
+		//console.log(famS[i]);
 		if (famS[i].wife) {
 	 		pars.push(famS[i].wife.rfn != p.rfn ? famS[i].wife : famS[i].husb);
-			pars[i].mar = famS[i].mar;
+			if (pars[i]) pars[i].mar = famS[i].mar;
 		}
 	}
 	let dad = null;
