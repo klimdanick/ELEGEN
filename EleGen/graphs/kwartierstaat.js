@@ -76,9 +76,9 @@ async function renderKwartierstaat(id, gen = 0, subangle = 90, angle = 0, depth 
     p.el.style.width = (10/Math.pow(gen, 0.5))+"%";
     if (gen == 5) {
         p.name.style.transform = `rotate(${90*-Math.sign(angle)}deg)`;
-        let name = p.name.innerText.split(" ");
-        console.log(name);
-        p.name.innerText = name[0]+" "+name[name.length-1];
+        let nameFirst = p.name.innerText.split(" ")[0];
+        let nameLast = sel.name.split("/")[1];
+        p.name.innerText = nameFirst+" "+nameLast;
     }
     //p.el.style.backgroundSize = "cover";
 
