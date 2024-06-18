@@ -1,72 +1,96 @@
-
-document.getElementById("menu").innerHTML += "<br><input type='button' name='Kwartierstaat' value='Kwartierstaat' onClick='changeGraph(1)' style='width:auto; z-index: 100; position: relative;'>";
-
-function drawKwartierstaat(i) {
-	changeCSS("http://stamboom.klimda.nl/stamboom/EleGen/graphs/kwartierstaat.css", 0);
-	let graph = document.getElementById("EleGen");
-	graph.innerHTML = baseGraph;
-	let lines = document.getElementById("lines");
-	lines.innerHTML = "";
-	let hard = document.getElementById("hard");
-	if (hard) hard.remove();
-	graph.innerHTML+="<h1 style='z-index: 0; position: absolute; width: 100%; font-size: 300%; text-align: center; top: 10px;'>Kwartierstaat</h1><div id=graph><hr></div>";
-	graph = document.getElementById("graph");
-	//graph.innerHTML += getHTMLelement(person);
-	let draw = true;
-	let I = [i];
-	let GenNumber = 0;
-	while (draw) {
-		let newI = [];
-		GenNumber++;
-		makeGen(GenNumber);
-		for (let j = 0; j < I.length; j++) {
-			let Gen = document.getElementById(GenNumber);
-			let person = "undefined";
-			if (I[j] != "undefined") {
-				person = searchPersonByREC(I[j])[0].person;
-				if (person.FAM.FAMC) {
-					let PAR = searchFamilyByREC(person.FAM.FAMC)[0].family.PAR;
-					if (PAR.HUSB) newI[newI.length] = PAR.HUSB; else newI[newI.length] = "undefined";
-					if (PAR.WIFE) newI[newI.length] = PAR.WIFE; else newI[newI.length] = "undefined";
-					
-				}
-			}
-			
-			Gen.innerHTML += getHTMLelement(person);
-			
+async function buildKwartierStaat(id) {
+	let rels = await buildRel(id, indis, fams);
+	let gens = [];
+    rels.gen1.sel.genPos = 0;
+	gens.push([rels.gen1.sel]);
+	while (true) {
+		let currentGen = [];
+		let lastGen = gens[gens.length-1]
+		for (let i = 0; i < lastGen.length; i++) {
+			let p = lastGen[i]
+			let r = findFamByRec([p.famc], fams)[0];
+			if (!r) continue;
+			if (r.husb) {
+				if (typeof r.husb === 'string') r.husb = findByRec(r.husb, indis)
+				r.husb.genPos = p.genPos*2;
+                currentGen.push(r.husb)
+            }
+			if (r.wife) {
+				if (typeof r.wife === 'string') r.wife = findByRec(r.wife, indis)
+				r.wife.genPos = p.genPos*2+1;
+                currentGen.push(r.wife)
+            }
 		}
-		if (newI.length == 0 || GenNumber == 5) draw = false;
-		console.log(newI + " end of gen " + GenNumber);
-		I = newI;
+		if (currentGen.length <= 0) break;
+		gens.push(currentGen);
 	}
-}
+	return gens;
 
-function getHTMLelement(person, s) {
-	if (person == "undefined") {
-		let HTML = "<a class='card' id='" + M
-		+ "><div>"
-		+ "Niet" + " " + "Bekend";
-		HTML += "</div></a>";
-		return HTML;
-	}
-	//console.log(person.REC);
-	if (!s) {
-		let HTML = "<a class='card' id='" + person.SEX
-			+ "' onClick='jumpTo(`" + person.REC + "`);'><div>"
-			+ person.fNAME + " " + person.lNAME;
-		HTML += "</div></a>";
-		return HTML;
-	} else if (s) {
-		console.log("self");
-		let HTML = "<a class='card' style='border-color: #ff7869;' id='" + person.SEX
-			+ "' onClick='jumpTo(`" + person.REC + "`);'><div>"
-			+ person.fNAME + " " + person.lNAME;
-		HTML += "</div></a>";
-		return HTML;
-	}
 }
+/*
+function renderKwartierstaat(gens) {
+	document.getElementById("searchRes").style.display = "none";
+	document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
+	document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
+	for (let i = 0; i < gens.length && i < 10; i++) {
+		for (let j = 0; j < gens[i].length; j++) {
+			let p = new Person(gens[i][j], 45, 90, {"hideDates": true})
+            let xpos = 0;
+            let ypos = (-50-i*160);
+            let subangle = 180/Math.pow(2, i)
+            let angle = -subangle*(Math.pow(2, i)/2)+subangle*(j+0.5)
+            if (i == 0) angle = 0;
+            p.el.style.transformOrigin = `$50% ${-ypos}%`;
+			p.el.style.transform = `rotate(${angle}deg)`;
+            p.el.style.transform += `translate(${xpos}%, ${ypos}%)`;
+		}
+	}
+}*/
 
-function makeGen(genNumber) {
-	let graph = document.getElementById("graph");
-	graph.innerHTML = "<br><div class='gen' id='" + genNumber + "'></div>" + graph.innerHTML;
+async function renderKwartierstaat(id, gen = 0, subangle = 90, angle = 0, depth = 6) {
+    if (depth == 0) return;
+    if (gen == 0) {
+        document.getElementById("searchRes").style.display = "none";
+        document.getElementById("titleScreen").style.display = "none";
+        document.documentElement.getElementsByClassName("persons")[0].innerHTML = "";
+        document.documentElement.getElementsByClassName("lines")[0].innerHTML = "";
+    }
+
+    let rels = await buildRel(id, indis, fams);
+    let sel = rels.gen1.sel;
+    let top = gen > 0 ? "-60%" : "-110%";
+	let p = new Person(sel, 50, 90, {"hideDates": true, "onclick": `renderKwartierstaat("${id}");`, "image": {"src":`EleGen/graphs/assets/kwartierstaat/gen${gen+1}_${sel.sex}.png`, "top": top}, "background": "rgba(0, 0, 0, 0)"})
+
+    let xpos = -50;
+    let ypos = (-50-gen*200);
+    
+    if (gen > 0) {
+        subangle = subangle/2
+        if (sel.sex == "F") angle += subangle;
+        if (sel.sex == "M") angle -= subangle;
+    }
+
+    p.el.style.transformOrigin = `${0}% ${0}%`;
+	p.el.style.transform = `rotate(${angle}deg)`;
+    p.el.style.transform += `translate(${xpos}%, ${ypos}%)`;
+    p.el.style.width = (10/Math.pow(gen, 0.5))+"%";
+    if (gen == 5) {
+        p.name.style.transform = `rotate(${90*-Math.sign(angle)}deg)`;
+        let nameFirst = p.name.innerText.split(" ")[0];
+        let nameLast = sel.name.split("/")[1];
+        p.name.innerText = nameFirst+" "+nameLast;
+    }
+    //p.el.style.backgroundSize = "cover";
+
+    let husb = rels.gen0.husb;
+    let wife = rels.gen0.wife;
+
+    if (husb) {
+        if (typeof husb === 'string') husb = findByRec(husb, indis)
+        renderKwartierstaat(husb.id, gen+1, subangle, angle, depth-1);
+    }
+    if (wife) {
+        if (typeof wife === 'string') wife = findByRec(wife, indis)
+        renderKwartierstaat(wife.id, gen+1, subangle, angle, depth-1);
+    }
 }
