@@ -18,7 +18,7 @@ async function buildFrontpage() {
 	getIndis(lines);
 	getFams(lines);
 	let res = findByName("Danick", indis)
-	new Person(res[0], 50, 65);
+	new Person(res[0], 50, 65, {"hideDates": false, "onclick": "renderKwartierstaat(\"@I\"+indi.rfn+\"@\");"});
 }
 
 
@@ -33,6 +33,22 @@ class Person {
 
 		if (parentElement == null) document.documentElement.getElementsByClassName("persons")[0].appendChild(this.el);
 		else parentElement.appendChild(this.el);
+
+		if (options.image) {
+			console.log("IMAGE")
+			this.image = new Image();
+			this.image.src = options.image.src;
+			this.image.style.position = "absolute";
+			this.image.style.zIndex = "-1";
+			this.image.style.top = options.image.top;
+			this.image.style.backgroundColor = "rgba(0, 0, 0, 0)";
+			this.el.style.overflow = "visible";
+			this.el.appendChild(this.image);
+		}
+
+		if (options.background) {
+			this.el.style.background = options.background;
+		}
 
 		let infoButton = document.createElement("span");
 		//this.el.appendChild(infoButton);
@@ -208,9 +224,9 @@ async function getIndis(lines) {
 
 function buildFam(fam, indis) {
 	if (!fam) return {};
-	if (fam.husb) fam.husb=findByRec(fam.husb, indis);
+	if (fam.husb && typeof fam.husb == "string") fam.husb=findByRec(fam.husb, indis);
 	else fam.husb == null;
-	if (fam.wife) fam.wife=findByRec(fam.wife, indis);
+	if (fam.wife && typeof fam.wife == "string") fam.wife=findByRec(fam.wife, indis);
 	else fam.wife == null;
 	if (fam.chil) for (let i = 0; i < fam.chil.length; i++) {
 		fam.chil[i] = findByRec(fam.chil[i], indis);
@@ -220,16 +236,14 @@ function buildFam(fam, indis) {
 
 function buildRel(indi, indis, fams) {
 	let p = findByRec(indi, indis);
-	
 	let famC = findFamByRec([p.famc], fams)[0];
 	buildFam(famC, indis);
-
+	
 	let famS = findFamByRec(p.fams, fams);
 	for (let i = 0; i < famS.length; i++) buildFam(famS[i], indis);
 	
 	let pars = [];
 	for (let i = 0; i < famS.length; i++) {
-		//console.log(famS[i]);
 		if (famS[i].wife) {
 	 		pars.push(famS[i].wife.rfn != p.rfn ? famS[i].wife : famS[i].husb);
 			if (pars[i]) pars[i].mar = famS[i].mar;

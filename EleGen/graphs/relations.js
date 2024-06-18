@@ -9,7 +9,6 @@ async function selectPerson(id) {
 	//let indis = await getIndis(lines);
 	let fams = await getFams(lines);
 	let rels = await buildRel(id, indis, fams);
-	console.log(rels);
 
 	if (rels.gen0.husb) {
 	new Person(rels.gen0.husb, 33, 15);
@@ -28,7 +27,7 @@ async function selectPerson(id) {
 	new Person(rels.gen1.sel, 50, 40);
 	if (rels.gen1.pars.length > 0 || rels.gen2.length > 0) new Line(true, 40, 50, 40);
 	for (let i = 0; i < rels.gen1.pars.length; i++) {
-		new Person(rels.gen1.pars[i], 20, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), {"hideDates": rels.gen1.pars.length >= 2});
+		new Person(rels.gen1.pars[i], 20, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), {"hideDates": rels.gen1.pars.length >= 2, "onclick": "selectPerson(\"@I\"+indi.rfn+\"@\");"});
 		let label = "";
 		if (rels.gen1.pars[i].mar) label = rels.gen1.pars[i].mar.date + "\n" + rels.gen1.pars[i].mar.plac;
 		new Line(true, 20, 40, 40+10*(i-Math.floor(rels.gen1.pars.length/2)), label);

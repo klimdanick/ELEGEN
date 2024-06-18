@@ -3,7 +3,6 @@ async function search() {
 	let value = document.getElementById("searchbar").value;
 	if (indis.length == 0) indis = await getIndis(await fetchGed());
 	let result = findByName(value, indis);
-	console.log(result);	
 	let parentEl = document.getElementById("searchRes");
 	parentEl.innerHTML = "";
 	if (result.length > 0) {
@@ -12,7 +11,7 @@ async function search() {
 		for (let i = 0; i < result.length; i++) {
 			let x = i % 5 + 1;
 			let y = Math.floor(i / 5)+1;
-			new Person(result[i], x*15, y*25, {"hideDates": false}, parentEl);
+			new Person(result[i], x*15, y*25, {"hideDates": false, "onclick": "selectPerson(\"@I\"+indi.rfn+\"@\");"}, parentEl);
 		}
 	}
 	parentEl.style.display = "block";
