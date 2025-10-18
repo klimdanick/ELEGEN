@@ -3,6 +3,7 @@
 		<title>EleGen</title>		
 		<link rel="stylesheet" href="EleGen/graphs/relations.css">		
 		<link rel="icon" href="icon.png" type="image/png">
+		<script src="https://klimdanick.nl/elementaljs/Elemental.js"></script>
 		<script src="./EleGen/EleGen.js"></script>
 		<script src="./EleGen/search.js"></script>
 		<script src="./EleGen/graphs/relations.js"></script>
@@ -11,24 +12,5 @@
 	</head>
 	
 	<body>
-
-		<!-- ELEGEN -->
-
-		<input type="text" placeholder="Name..." style="z-index: 102;" id="searchbar">
-		<input type="button" value="search" onclick="search()" style="z-index: 102;">
-
-		<div id="titleScreen"></div>
-		<div id="searchRes"></div>
-
-		<div id="leftGrad"></div>	<div id="rightGrad"></div>
-		<div id="leftScrBut" onclick="scrollChildren(30)">&#60</div>	<div id="rightScrBut" onclick="scrollChildren(-30)">&#62</div>
-
-		<div class="lines"></div>
-		<div class="persons"></div>
-
-		<textarea id="note" readonly></textarea>
-
-		<!-- ELEGEN -->
-
 	</body>
 </html>
