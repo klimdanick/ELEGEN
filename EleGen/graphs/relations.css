@@ -1,0 +1,54 @@
+/* .personCard {
+    background: var(--DEBIAN_RED) !important;
+} */
+
+.personCard.M {
+    background: var(--CURIOS_BLUE) !important;
+}
+
+.personCard.F {
+    background: var(--STRAWBERRY_MAGENTA) !important;
+}
+
+.genLayout {
+    height: 33%;
+    width: 100%;
+    background: none;
+    z-index: 1;
+}
+
+.genLayout span {
+    text-align: center;
+}
+
+.genLayout span b {
+    margin: 0;
+}
+
+.ElegenLayout {
+    height: 100%;
+    width: 100%;
+}
+
+.parsList {
+    position: absolute;
+    left: 10%;
+}
+
+.gen1 .sel {
+    position: absolute;
+    left: auto;
+    right: auto;
+}
+
+.lineLayout {
+    width:100%;
+    height: 100%;
+    position: absolute;
+    background: none;
+    z-index: 0;
+}
+
+.parsList {
+    background: none !important;
+}

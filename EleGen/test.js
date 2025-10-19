@@ -18,7 +18,7 @@ async function _TEST_Indis_length() {
 
     console.log(_TEST_Indis_length.name);
     if (pass) console.table({pass, time});
-    else console.table({pass, time, "length": indis.length, "lengthOpt": indisOpt.length});
+    else console.table({pass, time, "length": indis.length});
     console.log("\n");
 }
 

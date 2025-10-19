@@ -1,16 +1,27 @@
 <html>
-	<head>
-		<title>EleGen</title>		
-		<link rel="stylesheet" href="EleGen/graphs/relations.css">		
-		<link rel="icon" href="icon.png" type="image/png">
-		<script src="https://klimdanick.nl/elementaljs/Elemental.js"></script>
-		<script src="./EleGen/EleGen.js"></script>
-		<script src="./EleGen/search.js"></script>
-		<script src="./EleGen/graphs/relations.js"></script>
-		<script src="./EleGen/graphs/kwartierstaat.js"></script>
-		<!--script src="./Elegen/test.js"></script-->
-	</head>
-	
-	<body>
-	</body>
+
+<head>
+	<title>EleGen</title>
+	<link rel="stylesheet" href="EleGen/graphs/relations.css">
+	<link rel="icon" href="icon.png" type="image/png">
+	<script src="https://klimdanick.nl/elementaljs/Elemental.js"></script>
+	<script src="./EleGen/EleGen.js"></script>
+	<script src="./EleGen/search.js"></script>
+	<script src="./EleGen/graphs/relations.js"></script>
+	<script src="./EleGen/graphs/kwartierstaat.js"></script>
+	<!-- <script src="./Elegen/test.js"></script> -->
+	<script>
+		OnElementalLoad = () => {
+			new Layout().setAsMain();
+			let layout = new Layout("column");
+			layout.htmlEl.classList.add("ElegenLayout");
+			mainLayout.appendChild(layout);
+			loadTree(layout);
+		}
+	</script>
+</head>
+
+<body>
+</body>
+
 </html>
