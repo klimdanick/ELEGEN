@@ -1,0 +1,44 @@
+.kwartLayout {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.kwartLayout .tile {
+    position: absolute;
+    overflow: visible;
+    margin: 0;
+    transition: none;
+    bottom: 5vh;
+    align-items: center;
+}
+
+.kwartLayout .tile span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.kwartLayout .tile.gen0 span {
+    width: 150%;
+}
+
+.kwartLayout .tile.gen1 span {
+    width: 150%;
+}
+
+.kwartLayout .tile.gen2 span {
+    width: 150%;
+}
+
+.kwartLayout .tile.gen3 span {
+    width: 70%;
+}
+
+.kwartLayout .tile.gen5 span {
+    width: 80%;
+    font-size: 50%;
+    transform: rotate(90deg) translate(-10px, 25px);
+}

@@ -1,9 +1,16 @@
-renderGraphFunctions.push(renderRelations);
 
-function renderRelations(layoutMain) {
+elegenMenuItems.push(
+    new SimpleMenuItem("EleGen/graphs/assets/relations_selected.png", "Relaties", renderRelations)
+);
+
+function renderRelations() {
+    currentGraph = 1;
+    let layoutMain = elegenLayout;
     while (layoutMain.htmlEl.firstChild) {
         layoutMain.htmlEl.removeChild(layoutMain.htmlEl.lastChild);
     }
+
+    layoutMain.appendChild(elegenMenu);
 
     let rel = buildRel(selectedId, indis, fams);
     if (!rel) return;
@@ -32,7 +39,7 @@ function renderRelations(layoutMain) {
     gen1.appendChild(parsLayout);
     layoutMain.appendChild(gen1);
     
-    let sel = new PersonCard(rel.gen1.sel);
+    let sel = new PersonCard(rel.gen1.sel, false);
     if (sel) {
         gen1.appendChild(sel);
         sel.htmlEl.classList.add("sel");
@@ -61,6 +68,12 @@ function renderRelations(layoutMain) {
         }
     }
 
+    /*------------*\
+    |     NOTE     |
+    \*------------*/
+
+    // TODO add note
+
     /*-------------*\
     |     LINES     |
     \*-------------*/
@@ -75,7 +88,7 @@ function renderRelations(layoutMain) {
 }
 
 function drawLines(layoutMain, lineLayout, sel, gen0Cards, gen1Cards, gen2Cards) {
-    if (currentGraph != 0) return;
+    if (currentGraph != 1) return;
     while (lineLayout.htmlEl.firstChild) {
         lineLayout.htmlEl.removeChild(lineLayout.htmlEl.lastChild);
     }
@@ -129,8 +142,8 @@ class GenLayout extends Layout {
 }
 
 class PersonCard extends Card {
-    constructor(indi) {
-        super();
+    constructor(indi, compact = true) {
+        super(180);
         this.indi = indi;
         this.htmlEl.classList.add("personCard");
         this.htmlEl.classList.add(indi.sex);
@@ -139,12 +152,23 @@ class PersonCard extends Card {
         if (match) {
             const firstNames = match[1].trim().split(" ")[0];
             const lastName = match[2].trim();
-            if (firstNames != "X") this.appendChild(`<span>${firstNames} <b>${lastName}</b></span>`);
-            // else this.htmlEl.classList.remove(indi.sex);
-        } else {
-            // console.log("Invalid format");
+            if (firstNames == "X") {
+                this.style.width = "";
+                return;
+            }
             // this.htmlEl.classList.remove(indi.sex);
-        }
+            
+            this.appendChild(`<span>${firstNames} <b>${lastName}</b></span>`);
+
+            if (indi.birth && indi.death)
+                this.appendChild(`<span class="lifespan">${indi.birth.date} <b>-</b> ${indi.death.date}</span>`);
+            else if (indi.birth)
+                this.appendChild(`<span class="lifespan">${indi.birth.date} <b>-</b> unknown</span>`);
+            else if (indi.death)
+                this.appendChild(`<span class="lifespan">unknown <b>-</b> ${indi.death.date}</span>`);
+
+            // TODO more info button
+        } else this.style.width = "";
     }
 
     onClick() {
@@ -160,19 +184,19 @@ function buildRel(indi, indis, fams) {
     if (!p) return;
     let famC = findFamByRec([p.famc], fams)[0];
     buildFam(famC, indis);
-    console.log(famC);
+    // console.log(famC);
 
     let famS = findFamByRec(p.fams, fams);
     for (let i = 0; i < famS.length; i++) buildFam(famS[i], indis);
-    console.log(famS);
+    // console.log(famS);
 
     let pars = [];
     for (let i = 0; i < famS.length; i++) {
-        if (famS[i].wife.id != p.id) {
+        if (famS[i].wife && famS[i].wife.id != p.id) {
             pars.push(famS[i].wife);
             pars[i].mar = famS[i].mar;
         }
-        if (famS[i].husb.id != p.id) {
+        if (famS[i].husb && famS[i].husb.id != p.id) {
             pars.push(famS[i].husb);
             pars[i].mar = famS[i].mar;
         }

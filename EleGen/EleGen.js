@@ -1,21 +1,22 @@
-let renderGraphFunctions = [];
-let currentGraph = 0;
 let selectedId;
 let indis;
 let fams;
 let elegenLayout;
+let currentGraph = 0;
 
 async function loadTree(layout) {
     elegenLayout = layout;
     let lines = await fetchGed();
     await getIndis(lines);
     await getFams(lines);
-    selectPerson("@I1@"); //I1296
+	let results = await getPeopleWithQuarry("danick");
+	console.log(results );
+    selectPerson(results[0].id); //I1296
 }
 
 function selectPerson(id) {
     selectedId = id;
-    renderGraphFunctions[currentGraph](elegenLayout);
+    elegenMenu.selected.callback()
 }
 
 async function fetchGed() {
@@ -23,7 +24,7 @@ async function fetchGed() {
 	var myHeaders = new Headers();
 	myHeaders.append('Content-Type','text/plain; charset=UTF-8');
 
-	await fetch('ged_web.txt', myHeaders).then((response) => response.text()).then((data) => {
+	await fetch('ged.txt', myHeaders).then((response) => response.text()).then((data) => {
 		lines = data.split("\r\n");
 		if (lines.length <= 1) lines = data.split("\n");
 	});

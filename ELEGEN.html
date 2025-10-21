@@ -3,22 +3,41 @@
 <head>
 	<title>EleGen</title>
 	<link rel="stylesheet" href="EleGen/graphs/relations.css">
+	<link rel="stylesheet" href="EleGen/graphs/kwartierstaat.css">
 	<link rel="icon" href="icon.png" type="image/png">
 	<script src="https://klimdanick.nl/elementaljs/Elemental.js"></script>
-	<script src="./EleGen/EleGen.js"></script>
-	<script src="./EleGen/search.js"></script>
-	<script src="./EleGen/graphs/relations.js"></script>
-	<script src="./EleGen/graphs/kwartierstaat.js"></script>
-	<!-- <script src="./Elegen/test.js"></script> -->
+
 	<script>
+		let elegenMenu = new HamburgerMenu();
+
+		let elegenMenuItems = [
+			new TextInputMenuItem("searchBar", "https://klimdanick.nl/elementaljs/assets/search.png", "Search")
+		]
+
 		OnElementalLoad = () => {
 			new Layout().setAsMain();
 			let layout = new Layout("column");
 			layout.htmlEl.classList.add("ElegenLayout");
 			mainLayout.appendChild(layout);
+
+			elegenMenuItems[0].onsearch = search;
+
+			elegenMenu.addHead(`<span style="color: #c40f43;">Ele</span>Gen`);
+            elegenMenu.appendChildren(elegenMenuItems);
+            elegenMenu.select(elegenMenuItems[1]);
+			
+			layout.appendChild(elegenMenu);
+			
 			loadTree(layout);
+
 		}
 	</script>
+
+	<script src="./EleGen/EleGen.js"></script>
+	<script src="./EleGen/search.js"></script>
+	<script src="./EleGen/graphs/relations.js"></script>
+	<script src="./EleGen/graphs/kwartierstaat.js"></script>
+	<!-- <script src="./Elegen/test.js"></script> -->
 </head>
 
 <body>

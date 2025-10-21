@@ -2,12 +2,17 @@
     background: var(--DEBIAN_RED) !important;
 } */
 
+:root {
+    --FEMALE: var(--DEBIAN_RED);
+    --MALE: var(--CURIOS_BLUE);
+}
+
 .personCard.M {
-    background: var(--CURIOS_BLUE) !important;
+    background: var(--MALE) !important;
 }
 
 .personCard.F {
-    background: var(--STRAWBERRY_MAGENTA) !important;
+    background: var(--FEMALE) !important;
 }
 
 .genLayout {
@@ -15,6 +20,8 @@
     width: 100%;
     background: none;
     z-index: 1;
+    position: relative;
+    overflow: visible;
 }
 
 .genLayout span {
@@ -28,6 +35,8 @@
 .ElegenLayout {
     height: 100%;
     width: 100%;
+    overflow: hidden;
+    position: relative;
 }
 
 .parsList {
@@ -51,4 +60,20 @@
 
 .parsList {
     background: none !important;
+}
+
+.menu {
+    z-index: 2;
+    position: absolute;
+    left: 0em;
+    top: 0em;
+}
+
+.menu .selected {
+    background-color: var(--level1) !important;
+    filter: brightness(70%);
+}
+
+.personCard .lifespan {
+    font-size: smaller;
 }
