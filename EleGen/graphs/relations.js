@@ -57,6 +57,7 @@ function renderRelations() {
     let gen2 = new GenLayout("row");
     let gen2Cards = [];
     gen2.htmlEl.classList.add("gen2");
+    gen2.htmlEl.classList.add("scroll-container");
     layoutMain.appendChild(gen2);
 
     for (let i = 0; i < rel.gen2.length; i++) {
@@ -72,7 +73,15 @@ function renderRelations() {
     |     NOTE     |
     \*------------*/
 
-    // TODO add note
+    if (rel.gen1.sel.note) {
+        let noteLayout = new Layout();
+        noteLayout.htmlEl.classList.add("noteLayout");
+        gen1.appendChild(noteLayout);
+
+        let note = new Card();
+        note.appendChild(rel.gen1.sel.note);
+        noteLayout.appendChild(note);
+    }
 
     /*-------------*\
     |     LINES     |
@@ -85,9 +94,12 @@ function renderRelations() {
 
     setTimeout(() => {drawLines(layoutMain, lineLayout, sel, gen0Cards, gen1Cards, gen2Cards)}, 100)
     addEventListener("resize", () => {drawLines(layoutMain, lineLayout, sel, gen0Cards, gen1Cards, gen2Cards)})
+    gen2.htmlEl.addEventListener('scroll', () => {drawLines(layoutMain, lineLayout, sel, gen0Cards, gen1Cards, gen2Cards)})
 }
 
 function drawLines(layoutMain, lineLayout, sel, gen0Cards, gen1Cards, gen2Cards) {
+    let rel = buildRel(selectedId, indis, fams);
+
     if (currentGraph != 1) return;
     while (lineLayout.htmlEl.firstChild) {
         lineLayout.htmlEl.removeChild(lineLayout.htmlEl.lastChild);
@@ -98,6 +110,15 @@ function drawLines(layoutMain, lineLayout, sel, gen0Cards, gen1Cards, gen2Cards)
         let pos2 = calcPosition(sel.htmlEl, layoutMain.htmlEl);
 
         lineLayout.appendChild(new BlockLine("v", pos1, pos2));
+
+        let par = false;
+        if (i == 0 && rel.gen0.husb.famc) par = true;
+        if (i == 1 && rel.gen0.wife.famc) par = true;
+        if (par) {
+            let line = new BlockLine("v", pos1, {x: pos1.x, y: pos1.y-1000});
+            line.htmlEl.classList.add("dashed");
+            lineLayout.appendChild(line);
+        }
     }
 
     for (let i = 0; i < gen1Cards.length; i++) {
@@ -105,6 +126,22 @@ function drawLines(layoutMain, lineLayout, sel, gen0Cards, gen1Cards, gen2Cards)
         let pos2 = calcPosition(sel.htmlEl, layoutMain.htmlEl);
 
         lineLayout.appendChild(new BlockLine("h", pos1, pos2));
+
+        if (rel.gen1.pars[i].famc) {
+            let line = new BlockLine("v", pos1, {x: pos1.x, y: pos1.y-1000});
+            line.htmlEl.classList.add("dashed");
+            lineLayout.appendChild(line);
+        }
+
+        let label;
+        if (rel.gen1.pars[i].mar) label = rel.gen1.pars[i].mar.date + "\n\n" + rel.gen1.pars[i].mar.plac;
+        if (label) {
+            label = new Text(label);
+            label.style.position = "absolute";
+            label.style.left = `${pos1.x+200}px`;
+            label.style.top = `${pos1.y-40}px`;
+            lineLayout.appendChild(label);
+        }
     }
 
     for (let i = 0; i < gen2Cards.length; i++) {
@@ -117,6 +154,18 @@ function drawLines(layoutMain, lineLayout, sel, gen0Cards, gen1Cards, gen2Cards)
         }
 
         lineLayout.appendChild(new BlockLine("v", pos1, {x: pos2.x, y: pos2.y}));
+
+        let children = false;
+		for (let j = 0; j < rel.gen2[i].fams.length; j++) {
+			chil = findFamByRec(rel.gen2[i].fams[j], fams)[0].chil;
+			if (chil && chil.length>0) children = true;
+		}
+
+        if (children) {
+            let line = new BlockLine("v", pos1, {x: pos1.x, y: pos1.y+1000});
+            line.htmlEl.classList.add("dashed");
+            lineLayout.appendChild(line);
+        }
     }
 }
 
@@ -131,7 +180,7 @@ function calcPosition(target, outer) {
     const centerX = relativeX + targetRect.width / 2;
     const centerY = relativeY + targetRect.height / 2;
 
-    return {x: centerX+8, y: centerY+8};
+    return {x: centerX, y: centerY};
 }
 
 class GenLayout extends Layout {
@@ -160,13 +209,25 @@ class PersonCard extends Card {
             
             this.appendChild(`<span>${firstNames} <b>${lastName}</b></span>`);
 
-            if (indi.birth && indi.death)
-                this.appendChild(`<span class="lifespan">${indi.birth.date} <b>-</b> ${indi.death.date}</span>`);
-            else if (indi.birth)
-                this.appendChild(`<span class="lifespan">${indi.birth.date} <b>-</b> unknown</span>`);
-            else if (indi.death)
-                this.appendChild(`<span class="lifespan">unknown <b>-</b> ${indi.death.date}</span>`);
-
+            let lifespanLayout = new Layout("row");
+            this.appendChild(lifespanLayout);
+            let s = "";
+            if (indi.birth && indi.death) {
+                s = `<span class="lifespan">${indi.birth.date}`; if (!compact) s += `\n${indi.birth.plac}</span>`;
+                lifespanLayout.appendChild(s);
+                lifespanLayout.appendChild(`<span class="lifespan"><b>-</b></span>`);
+                s = `<span class="lifespan">${indi.death.date}`; if (!compact) s+= `\n${indi.death.plac}</span>`
+                lifespanLayout.appendChild(s);
+            } else if (indi.birth) {
+                s = `<span class="lifespan">${indi.birth.date}`; if (!compact) s += `\n${indi.birth.plac}</span>`;
+                lifespanLayout.appendChild(s);
+                lifespanLayout.appendChild(`<span class="lifespan"><b>-</b></span>`);
+                lifespanLayout.appendChild(`<span class="lifespan">unknown</span>`);
+            } else if (indi.death) {
+                lifespanLayout.appendChild(`<span class="lifespan">unknown</span>`);
+                lifespanLayout.appendChild(`<span class="lifespan"><b>-</b></span>`);
+                s = `<span class="lifespan">${indi.death.date}`; if (!compact) s+= `\n${indi.death.plac}</span>`
+            }
             // TODO more info button
         } else this.style.width = "";
     }

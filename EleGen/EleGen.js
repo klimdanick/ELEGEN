@@ -9,7 +9,7 @@ async function loadTree(layout) {
     let lines = await fetchGed();
     await getIndis(lines);
     await getFams(lines);
-	let results = await getPeopleWithQuarry("danick");
+	let results = await getPeopleWithQuarry("15 FEB 1872");
 	console.log(results );
     selectPerson(results[0].id); //I1296
 }

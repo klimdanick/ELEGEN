@@ -50,8 +50,18 @@
     right: auto;
 }
 
+.genLayout.gen2 {
+    overflow: auto !important;
+    justify-content: flex-start;
+    /* padding-inline: 50%; */
+    /* creates visual centering */
+    /* transform: translateX(50%); */
+    width: fit-content;
+    max-width: 100%;
+}
+
 .lineLayout {
-    width:100%;
+    width: 100%;
     height: 100%;
     position: absolute;
     background: none;
@@ -74,6 +84,28 @@
     filter: brightness(70%);
 }
 
-.personCard .lifespan {
+.personCard Layout {
+    background: none;
+}
+
+.personCard Layout .lifespan {
     font-size: smaller;
+}
+
+.dashed line {
+    border-style: dashed;
+}
+
+.noteLayout {
+    position: absolute;
+    right: 10%;
+    top: -20%;
+    height: 40vh;
+    background: none;
+}
+
+.noteLayout .card {
+    background: var(--level1);
+    /* width: 30em; */
+    max-width: 30vw;
 }
